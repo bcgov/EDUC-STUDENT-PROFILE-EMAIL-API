@@ -21,77 +21,6 @@ pipeline{
             resourceRequestMemory: 2Gi
             resourceLimitCpu: 3
             resourceLimitMemory: 2Gi
-            env:
-            - name: SONARQUBE_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: 'student-profile-email-api-secrets'
-                  key: sonarqube-host
-            - name: SONARQUBE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: 'student-profile-email-api-secrets'
-                  key: sonarqube-token
-            - name: CHES_CLIENT_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: CHES_CLIENT_ID
-            - name: CHES_CLIENT_SECRET
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: CHES_CLIENT_SECRET
-            - name: CHES_TOKEN_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: CHES_TOKEN_URL
-            - name: CHES_ENDPOINT_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: CHES_ENDPOINT_URL
-            - name: EMAIL_TEMPLATE_COMPLETED_REQUEST
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: EMAIL_TEMPLATE_COMPLETED_REQUEST
-            - name: EMAIL_TEMPLATE_REJECTED_REQUEST
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: EMAIL_TEMPLATE_REJECTED_REQUEST
-            - name: EMAIL_TEMPLATE_ADDITIONAL_INFO
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: EMAIL_TEMPLATE_ADDITIONAL_INFO
-            - name: SPRING_SECURITY_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: SPRING_SECURITY_LOG_LEVEL
-            - name: SPRING_WEB_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: SPRING_WEB_LOG_LEVEL
-            - name: APP_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: APP_LOG_LEVEL
-            - name: SPRING_BOOT_AUTOCONFIG_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: SPRING_BOOT_AUTOCONFIG_LOG_LEVEL
-            - name: SOAM_PUBLIC_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: 'student-profile-email-api-test-config-map'
-                  key: SOAM_PUBLIC_KEY
             volumeMounts:
             - mountPath: '/home/jenkins/.m2'
               name: pvc
@@ -127,24 +56,14 @@ pipeline{
       PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
   }
   stages{
-    stage('Unit Tests') {
+    stage('Build App') {
       steps {
         script {
           def pom = readMavenPom file: 'api/pom.xml'
           VERSION = pom.version
 
-          //Env variable is to fix issue where special characters in password were not being escaped properly
-          def command = $//bin/bash -c "mvn -f ./api/pom.xml test"/$
-          sh """
-            set +x
-            $command
-          """
+          sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
         }
-      }
-    }
-    stage('Build App') {
-      steps {
-        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
     stage('Create Image Builder') {
@@ -204,15 +123,6 @@ pipeline{
           echo 'Deployment to Dev failed'
         }
       }
-    }
-    stage('Report to SonarQube') {
-        steps {
-            script{
-                dir('api'){
-                    sh '/bin/bash -c "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_HOSTNAME} -Dsonar.login=${SONARQUBE_TOKEN}"'
-                }
-            }
-        }
     }
   }
 }
