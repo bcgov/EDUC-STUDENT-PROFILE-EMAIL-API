@@ -18,4 +18,8 @@ public class RequestEmailVerificationEntity extends BaseEmailEntity {
   private String requestId;
   @NotNull(message = "Identity Type Label can not be null.")
   private String identityTypeLabel;
+  @NotNull(message = "verificationUrl can not be null.")
+  private String verificationUrl; // this holds the url link.
+  @NotNull(message = "jwt Token can not be null.")
+  private String jwtToken;
 }

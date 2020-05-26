@@ -5,7 +5,6 @@ import ca.bc.gov.educ.api.student.profile.email.exception.StudentEmailRuntimeExc
 import ca.bc.gov.educ.api.student.profile.email.model.*;
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.util.JWTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +29,11 @@ public class StudentEmailService {
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your GetMyPEN request within 24 hours of receiving this email";
   private final ApplicationProperties props;
   private final RestUtils restUtils;
-  private final JWTUtil jwtUtil;
 
   @Autowired
-  public StudentEmailService(final ApplicationProperties props, final RestUtils restUtils, final JWTUtil jwtUtil) {
+  public StudentEmailService(final ApplicationProperties props, final RestUtils restUtils) {
     this.props = props;
     this.restUtils = restUtils;
-    this.jwtUtil = jwtUtil;
   }
 
   public void sendCompletedRequestEmail(RequestCompleteEmailEntity penRequest) {
@@ -63,14 +60,16 @@ public class StudentEmailService {
 
   /**
    * This method is responsible to send verification email.
-   *
+   * the replacement starts with index 0 , so there are eight replacements in the template.
    * @param emailVerificationEntity the payload containing the pen request id and email.
    */
   public void sendVerifyEmail(RequestEmailVerificationEntity emailVerificationEntity) {
     log.debug("sending verify email.");
-    final String token = jwtUtil.createJWTToken(emailVerificationEntity.getRequestId(), emailVerificationEntity.getEmailAddress(), 0L, props.getTimeToLive());
-    final String email = MessageFormat.format(props.getEmailTemplateVerifyEmail().replace("'", "''"), emailVerificationEntity.getIdentityTypeLabel(), token, emailVerificationEntity.getIdentityTypeLabel(), token, token);
-    sendEmail(emailVerificationEntity, email, VERIFY_EMAIL_SUBJECT);
+    final String emailBody = MessageFormat.format(props.getEmailTemplateVerifyEmail().replace("'", "''"),
+        emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
+        emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
+        emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken());
+    sendEmail(emailVerificationEntity, emailBody, VERIFY_EMAIL_SUBJECT);
     log.debug("verification email sent successfully.");
   }
 

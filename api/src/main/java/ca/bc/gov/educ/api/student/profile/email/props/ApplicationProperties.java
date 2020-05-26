@@ -32,11 +32,6 @@ public class ApplicationProperties {
   @Value("${email.template.verifyEmail}")
   private String emailTemplateVerifyEmail;
 
-  /**
-   * Expected property value in minutes.
-   */
-  @Value("${jwt.token.ttl}")
-  private Integer timeToLive;
 
   @Value("${url.login.basic}")
   private String loginBasic;
