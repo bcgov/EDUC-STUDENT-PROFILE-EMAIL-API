@@ -68,7 +68,7 @@ public class StudentEmailService {
    */
   public void sendVerifyEmail(RequestEmailVerificationEntity emailVerificationEntity) {
     log.debug("sending verify email.");
-    final String token = jwtUtil.createJWTToken(emailVerificationEntity.getPenRequestId(), emailVerificationEntity.getEmailAddress(), 0L, props.getTimeToLive());
+    final String token = jwtUtil.createJWTToken(emailVerificationEntity.getRequestId(), emailVerificationEntity.getEmailAddress(), 0L, props.getTimeToLive());
     final String email = MessageFormat.format(props.getEmailTemplateVerifyEmail().replace("'", "''"), emailVerificationEntity.getIdentityTypeLabel(), token, emailVerificationEntity.getIdentityTypeLabel(), token, token);
     sendEmail(emailVerificationEntity, email, VERIFY_EMAIL_SUBJECT);
     log.debug("verification email sent successfully.");

@@ -14,8 +14,8 @@ import javax.validation.constraints.NotNull;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestEmailVerificationEntity extends BaseEmailEntity {
-  @NotNull(message = "Pen Request ID can not be null.")
-  private String penRequestId;
+  @NotNull(message = "Request ID can not be null.")
+  private String requestId;
   @NotNull(message = "Identity Type Label can not be null.")
   private String identityTypeLabel;
 }
