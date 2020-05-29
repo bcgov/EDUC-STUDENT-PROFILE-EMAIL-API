@@ -43,7 +43,4 @@ public interface StudentEmailEndpoint {
   @Operation(description = "verify student email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> verifyEmail(@Validated @RequestBody RequestEmailVerificationEntity penRequestEmailVerificationEntity);
 
-  @GetMapping("/health")
-  @Operation(description = "health check", responses = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
-  ResponseEntity<String> health();
 }

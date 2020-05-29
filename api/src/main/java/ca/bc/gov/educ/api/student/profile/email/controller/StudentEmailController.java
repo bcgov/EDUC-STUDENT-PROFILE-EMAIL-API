@@ -59,10 +59,6 @@ public class StudentEmailController implements StudentEmailEndpoint {
     return ResponseEntity.noContent().build();
   }
 
-  @Override
-  public ResponseEntity<String> health() {
-    return ResponseEntity.ok("OK");
-  }
 
   private void validateEmail(BaseEmailEntity emailEntity) {
     val validationResult = emailValidator.validateEmail(emailEntity);
