@@ -10,13 +10,13 @@ SOAM_KC=$PEN_NAMESPACE-$envValue.pathfinder.gov.bc.ca
 NATS_CLUSTER=educ_pen_nats_cluster
 NATS_URL="nats://nats.${PEN_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 
-oc project $PEN_NAMESPACE-$envValue
+oc project $COMMON_NAMESPACE-$envValue
 SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
 SOAM_KC_LOAD_USER_PASS=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
 URL_LOGIN_BASIC="https://pen-request-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bceid"
 URL_LOGIN_BCSC="https://pen-request-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bcsc"
 
-oc project $COMMON_NAMESPACE-$envValue
+oc project $PEN_NAMESPACE-$envValue
 CHES_CLIENT_ID=$(oc -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_CLIENT_ID\": \"\(.*\)\",/\1/p")
 CHES_CLIENT_SECRET=$(oc -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_CLIENT_SECRET\": \"\(.*\)\",/\1/p")
 CHES_TOKEN_URL=$(oc -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_TOKEN_URL\": \"\(.*\)\"/\1/p")
