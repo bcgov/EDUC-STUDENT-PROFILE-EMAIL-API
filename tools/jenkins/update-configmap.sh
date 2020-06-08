@@ -7,7 +7,7 @@ TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
 KCADM_FILE_BIN_FOLDER="/tmp/keycloak-9.0.3/bin"
 SOAM_KC=$COMMON_NAMESPACE-$envValue.pathfinder.gov.bc.ca
-NATS_CLUSTER=educ_pen_nats_cluster
+NATS_CLUSTER=educ_nats_cluster
 NATS_URL="nats://nats.${PEN_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 
 oc project $COMMON_NAMESPACE-$envValue
