@@ -38,4 +38,10 @@ public class ApplicationProperties {
 
   @Value("${url.login.bcsc}")
   private String loginBcsc;
+
+  @Value("${nats.streaming.server.url}")
+  private String natsUrl;
+
+  @Value("${nats.streaming.server.clusterId}")
+  private String natsClusterId;
 }
