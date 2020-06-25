@@ -110,7 +110,7 @@ pipeline{
                 sh "bash ./download-kc.sh \"${NAMESPACE}\""
             }
         }
-        configMapChesSetup("${APP_NAME}","${APP_NAME}".toUpperCase(), NAMESPACE);
+        configMapSetup("${APP_NAME}","${APP_NAME}".toUpperCase(), NAMESPACE);
         script{
           dir('tools/jenkins'){
             def configVars
@@ -123,7 +123,7 @@ pipeline{
   }
 }
 
-def configMapChesSetup(String appName,String appNameUpper, String namespace){
+def configMapSetup(String appName,String appNameUpper, String namespace){
     script {
 	  
       try{
@@ -147,11 +147,20 @@ def configMapChesSetup(String appName,String appNameUpper, String namespace){
               string(defaultValue: "",
                       description: "Password for ${appName} to connect to the database",
                       name: "CHES_TOKEN_URL"),
+              string(defaultValue: "",
+                      description: 'JDBC connect string for database',
+                      name: 'DB_JDBC_CONNECT_STRING'),
+              string(defaultValue: "",
+                      description: "Username for ${appName} to connect to the database",
+                      name: "DB_USER"),
+              password(defaultValue: "",
+                      description: "Password for ${appName} to connect to the database",
+                      name: "DB_PWD"),
           ])
 		sh """
 		  set +x
 		  echo Running curl command...
-		  oc create -n ${namespace}-dev configmap ${appName}-dev-setup-config --from-literal=CHES_CLIENT_ID=${configProperties.CHES_CLIENT_ID} --from-literal=CHES_TOKEN_URL=${configProperties.CHES_TOKEN_URL} --from-literal=CHES_ENDPOINT_URL=${configProperties.CHES_ENDPOINT_URL} --from-literal=CHES_CLIENT_SECRET=${configProperties.CHES_CLIENT_SECRET} --dry-run -o yaml | oc apply -f -
+		  oc create -n ${namespace}-dev configmap ${appName}-dev-setup-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_${appNameUpper}=${configProperties.DB_USER} --from-literal=DB_PWD_${appNameUpper}=${configProperties.DB_PWD} --from-literal=CHES_CLIENT_ID=${configProperties.CHES_CLIENT_ID} --from-literal=CHES_TOKEN_URL=${configProperties.CHES_TOKEN_URL} --from-literal=CHES_ENDPOINT_URL=${configProperties.CHES_ENDPOINT_URL} --from-literal=CHES_CLIENT_SECRET=${configProperties.CHES_CLIENT_SECRET} --dry-run -o yaml | oc apply -f -
 		  oc project ${namespace}-tools
 		"""
       }
