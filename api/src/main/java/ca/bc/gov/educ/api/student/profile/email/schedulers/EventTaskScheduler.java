@@ -5,7 +5,7 @@ import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.constants.EventType;
 import ca.bc.gov.educ.api.student.profile.email.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.student.profile.email.model.Event;
-import ca.bc.gov.educ.api.student.profile.email.model.StudentProfileReqEmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequestEmailEventRepository;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,7 +61,7 @@ public class EventTaskScheduler {
     }
   }
 
-  private byte[] penRequestEmailAPIEventProcessed(StudentProfileReqEmailEventEntity emailEvent) throws JsonProcessingException {
+  private byte[] penRequestEmailAPIEventProcessed(EmailEventEntity emailEvent) throws JsonProcessingException {
     Event event = Event.builder()
         .sagaId(emailEvent.getSagaId())
         .eventType(EventType.valueOf(emailEvent.getEventType()))
@@ -70,7 +70,7 @@ public class EventTaskScheduler {
     return JsonUtil.getJsonStringFromObject(event).getBytes();
   }
 
-  private byte[] createOutboxEvent(StudentProfileReqEmailEventEntity emailEvent) throws JsonProcessingException {
+  private byte[] createOutboxEvent(EmailEventEntity emailEvent) throws JsonProcessingException {
     Event event = Event.builder().eventType(PROFILE_REQUEST_EMAIL_API_EVENT_OUTBOX_PROCESSED).eventPayload(emailEvent.getEventId().toString()).build();
     return JsonUtil.getJsonStringFromObject(event).getBytes();
   }

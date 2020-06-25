@@ -26,12 +26,16 @@ public class EventHandlerService {
   private final EmailEventService emailEventService;
 
   @Getter(PRIVATE)
-  private final StudentEmailService emailService;
+  private final UMPEmailService umpEmailService;
+
+  @Getter(PRIVATE)
+  private final GMPEmailService gmpEmailService;
 
   @Autowired
-  public EventHandlerService(final StudentEmailService emailService, final EmailEventService emailEventService) {
-    this.emailService = emailService;
+  public EventHandlerService(final UMPEmailService umpEmailService, final EmailEventService emailEventService, GMPEmailService gmpEmailService) {
+    this.umpEmailService = umpEmailService;
     this.emailEventService = emailEventService;
+    this.gmpEmailService = gmpEmailService;
   }
 
   public void handleEvent(Event event) {
@@ -57,6 +61,16 @@ public class EventHandlerService {
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           handleNotifyStudentProfileRequestReject(event);
           break;
+        case NOTIFY_STUDENT_PEN_REQUEST_COMPLETE:
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_COMPLETE event :: ");
+          log.trace(PAYLOAD_LOG, event.getEventPayload());
+          handleNotifyStudentPenRequestComplete(event);
+          break;
+        case NOTIFY_STUDENT_PEN_REQUEST_RETURN:
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_RETURN event :: ");
+          log.trace(PAYLOAD_LOG, event.getEventPayload());
+          handleNotifyStudentPenRequestReturn(event);
+          break;
         default:
           log.info("silently ignoring other events.");
           break;
@@ -67,11 +81,11 @@ public class EventHandlerService {
   }
 
   private void handleNotifyStudentProfileRequestComplete(Event event) throws JsonProcessingException {
-    StudentProfileReqEmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
-    RequestCompleteEmailEntity requestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(RequestCompleteEmailEntity.class, event.getEventPayload());
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    UMPRequestCompleteEmailEntity umpRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(UMPRequestCompleteEmailEntity.class, event.getEventPayload());
     if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
       try {
-        getEmailService().sendCompletedRequestEmail(requestCompleteEmailEntity);
+        getUmpEmailService().sendCompletedRequestEmail(umpRequestCompleteEmailEntity);
         getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
       } catch (Exception ex) {
         log.error("exception occurred while sending complete email", ex);
@@ -80,32 +94,57 @@ public class EventHandlerService {
   }
 
   private void handleNotifyStudentProfileRequestReturn(Event event) throws JsonProcessingException {
-    StudentProfileReqEmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    RequestAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(RequestAdditionalInfoEmailEntity.class, event.getEventPayload());
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    UMPAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(UMPAdditionalInfoEmailEntity.class, event.getEventPayload());
     if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
       try {
-        getEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
+        getUmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
         getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
       } catch (Exception ex) {
-        log.error("exception occurred while sending return email", ex);
+        log.error("exception occurred while sending return email for UMP", ex);
       }
     }
   }
 
   private void handleNotifyStudentProfileRequestReject(Event event) throws JsonProcessingException {
-    StudentProfileReqEmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    RequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(RequestRejectedEmailEntity.class, event.getEventPayload());
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    UMPRequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(UMPRequestRejectedEmailEntity.class, event.getEventPayload());
     if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
       try {
-        getEmailService().sendRejectedRequestEmail(rejectedEmail);
+        getUmpEmailService().sendRejectedRequestEmail(rejectedEmail);
         getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
       } catch (Exception ex) {
-        log.error("exception occurred while sending reject email", ex);
+        log.error("exception occurred while sending reject email for UMP", ex);
       }
     }
   }
 
   private void handlePenRequestEmailOutboxProcessed(String eventId) {
     getEmailEventService().updateEventStatus(UUID.fromString(eventId), MESSAGE_PUBLISHED.toString());
+  }
+  private void handleNotifyStudentPenRequestComplete(Event event) throws JsonProcessingException {
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    GMPRequestCompleteEmailEntity penRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestCompleteEmailEntity.class, event.getEventPayload());
+    if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
+      try {
+        getGmpEmailService().sendCompletedPENRequestEmail(penRequestCompleteEmailEntity, penRequestCompleteEmailEntity.getDemographicsChanged());
+        getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
+      } catch (Exception ex) {
+        log.error("exception occurred while sending complete email for GMP", ex);
+      }
+    }
+  }
+
+  private void handleNotifyStudentPenRequestReturn(Event event) throws JsonProcessingException {
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    GMPRequestAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestAdditionalInfoEmailEntity.class, event.getEventPayload());
+    if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
+      try {
+        getGmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
+        getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
+      } catch (Exception ex) {
+        log.error("exception occurred while sending return email for GMP", ex);
+      }
+    }
   }
 }

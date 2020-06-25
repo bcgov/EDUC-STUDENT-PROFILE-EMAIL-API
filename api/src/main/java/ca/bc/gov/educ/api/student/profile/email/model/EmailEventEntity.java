@@ -19,10 +19,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "STUDENT_PROFILE_REQUEST_EMAIL_EVENT")
+@Table(name = "STUDENT_PROFILE_EMAIL_EVENT")
 @Data
 @DynamicUpdate
-public class StudentProfileReqEmailEventEntity {
+public class EmailEventEntity {
 
 
   @Id

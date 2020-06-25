@@ -8,18 +8,18 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class StudentEmailMVCConfig implements WebMvcConfigurer {
+public class StudentProfileEmailMVCConfig implements WebMvcConfigurer {
 
     @Getter(AccessLevel.PRIVATE)
-    private final StudentEmailRequestInterceptor studentEmailRequestInterceptor;
+    private final StudentProfileEmailRequestInterceptor studentProfileEmailRequestInterceptor;
 
     @Autowired
-    public StudentEmailMVCConfig(final StudentEmailRequestInterceptor studentEmailRequestInterceptor){
-        this.studentEmailRequestInterceptor = studentEmailRequestInterceptor;
+    public StudentProfileEmailMVCConfig(final StudentProfileEmailRequestInterceptor studentProfileEmailRequestInterceptor){
+        this.studentProfileEmailRequestInterceptor = studentProfileEmailRequestInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(studentEmailRequestInterceptor).addPathPatterns("/**/**/");
+        registry.addInterceptor(studentProfileEmailRequestInterceptor).addPathPatterns("/**/**/");
     }
 }
