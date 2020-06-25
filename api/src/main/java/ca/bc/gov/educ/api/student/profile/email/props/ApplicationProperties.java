@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class ApplicationProperties {
 
+  //common props
   @Value("${ches.client.id}")
   private String chesClientID;
   @Value("${ches.client.secret}")
@@ -23,25 +24,54 @@ public class ApplicationProperties {
   private String chesTokenURL;
   @Value("${ches.endpoint.url}")
   private String chesEndpointURL;
-  @Value("${email.template.completedRequest}")
-  private String emailTemplateCompletedRequest;
-  @Value("${email.template.rejectedRequest}")
-  private String emailTemplateRejectedRequest;
-  @Value("${email.template.additionalInfoRequested}")
-  private String emailTemplateAdditionalInfo;
-  @Value("${email.template.verifyEmail}")
-  private String emailTemplateVerifyEmail;
-
-
-  @Value("${url.login.basic}")
-  private String loginBasic;
-
-  @Value("${url.login.bcsc}")
-  private String loginBcsc;
 
   @Value("${nats.streaming.server.url}")
   private String natsUrl;
 
   @Value("${nats.streaming.server.clusterId}")
   private String natsClusterId;
+
+  //UMP fields
+
+  @Value("${email.template.completedRequest.ump}")
+  private String emailTemplateCompletedRequestUMP;
+
+  @Value("${email.template.rejectedRequest.ump}")
+  private String emailTemplateRejectedRequestUMP;
+
+  @Value("${email.template.additionalInfoRequested.ump}")
+  private String emailTemplateAdditionalInfoUMP;
+
+  @Value("${email.template.verifyEmail.ump}")
+  private String emailTemplateVerifyEmailUMP;
+
+  @Value("${url.login.basic.ump}")
+  private String loginBasicUMP;
+
+  @Value("${url.login.bcsc.ump}")
+  private String loginBcscUMP;
+
+
+  //GMP fields
+
+  @Value("${email.template.completedRequest.demographicChange.gmp}")
+  private String emailTemplateCompleteRequestDemographicChangeGMP;
+
+  @Value("${email.template.completedRequest.gmp}")
+  private String emailTemplateCompletedRequestGMP;
+
+  @Value("${email.template.rejectedRequest.gmp}")
+  private String emailTemplateRejectedRequestGMP;
+
+  @Value("${email.template.additionalInfoRequested.gmp}")
+  private String emailTemplateAdditionalInfoGMP;
+
+  @Value("${email.template.verifyEmail.gmp}")
+  private String emailTemplateVerifyEmailGMP;
+
+  @Value("${url.login.basic.gmp}")
+  private String loginBasicGMP;
+
+  @Value("${url.login.bcsc.gmp}")
+  private String loginBcscGMP;
 }

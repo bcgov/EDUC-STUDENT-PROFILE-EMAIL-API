@@ -9,9 +9,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RequestCompleteEmailEntity extends BaseEmailEntity {
+public class GMPRequestCompleteEmailEntity extends BaseEmailEntity {
 
   @NotNull(message = "First Name can not be null")
   private String firstName;
 
+  private Boolean demographicsChanged;
 }

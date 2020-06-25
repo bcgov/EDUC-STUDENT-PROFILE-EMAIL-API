@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RequestRejectedEmailEntity extends BaseEmailEntity {
+public class UMPRequestRejectedEmailEntity extends BaseEmailEntity {
 
   @NotNull(message = "Rejection Reason can not be null")
   private String rejectionReason;

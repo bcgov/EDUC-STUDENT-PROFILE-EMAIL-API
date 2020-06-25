@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class StudentEmailRequestInterceptor extends HandlerInterceptorAdapter {
+public class StudentProfileEmailRequestInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(StudentEmailRequestInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(StudentProfileEmailRequestInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.model.Event;
-import ca.bc.gov.educ.api.student.profile.email.model.StudentProfileReqEmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequestEmailEventRepository;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +37,9 @@ public class EmailEventService {
    * must use new transaction, so that data is committed, user must not be notified if db transaction fails.
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public StudentProfileReqEmailEventEntity createOrUpdateEventInDB(Event event) {
+  public EmailEventEntity createOrUpdateEventInDB(Event event) {
     var emailEventEntityOptional = getEmailEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
-    StudentProfileReqEmailEventEntity penRequestEvent;
+    EmailEventEntity penRequestEvent;
     if (emailEventEntityOptional.isEmpty()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_PAYLOAD, event);
@@ -68,8 +68,8 @@ public class EmailEventService {
     }
   }
 
-  private StudentProfileReqEmailEventEntity createPenRequestEmailEvent(Event event) {
-    return StudentProfileReqEmailEventEntity.builder()
+  private EmailEventEntity createPenRequestEmailEvent(Event event) {
+    return EmailEventEntity.builder()
         .createDate(LocalDateTime.now())
         .updateDate(LocalDateTime.now())
         .createUser(event.getEventType().toString().substring(0, 32)) //need to discuss what to put here.

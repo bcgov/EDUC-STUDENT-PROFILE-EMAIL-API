@@ -47,7 +47,7 @@ public class MessageSubscriber {
     Options options = new Options.Builder()
         .natsUrl(applicationProperties.getNatsUrl())
         .clusterId(applicationProperties.getNatsClusterId())
-        .clientId("student-profile-request-email-api-subscriber" + UUID.randomUUID().toString())
+        .clientId("student-profile-email-api-subscriber" + UUID.randomUUID().toString())
         .connectionLostHandler(this::connectionLostHandler).build();
     connectionFactory = new StreamingConnectionFactory(options);
     connection = connectionFactory.createConnection();

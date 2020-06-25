@@ -41,6 +41,6 @@ public class StudentEmailApiResourceApplication {
   @Bean
   @Autowired
   public LockProvider lockProvider( JdbcTemplate jdbcTemplate, PlatformTransactionManager transactionManager) {
-    return new JdbcTemplateLockProvider(jdbcTemplate, transactionManager, "STUDENT_PROFILE_REQUEST_EMAIL_SHEDLOCK");
+    return new JdbcTemplateLockProvider(jdbcTemplate, transactionManager, "STUDENT_PROFILE_EMAIL_SHEDLOCK");
   }
 }

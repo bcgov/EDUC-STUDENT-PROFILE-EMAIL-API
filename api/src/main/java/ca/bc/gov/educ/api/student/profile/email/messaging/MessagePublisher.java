@@ -38,7 +38,7 @@ public class MessagePublisher implements Closeable {
             .natsUrl(applicationProperties.getNatsUrl())
             .clusterId(applicationProperties.getNatsClusterId())
             .connectionLostHandler(this::connectionLostHandler)
-            .clientId("pen-request-email-api-publisher" + UUID.randomUUID().toString()).build();
+            .clientId("student-profile-email-api-publisher" + UUID.randomUUID().toString()).build();
     connectionFactory = new StreamingConnectionFactory(options);
     connection = connectionFactory.createConnection();
   }

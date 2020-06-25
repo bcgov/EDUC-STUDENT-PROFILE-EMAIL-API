@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Service
 @Slf4j
-public class StudentEmailService {
+public class UMPEmailService {
 
   private static final String STUDENT_PROFILE_REQUEST = "Your Personal Education Number (PEN) Request";
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your UpdateMyPENInfo request within 24 hours of receiving this email";
@@ -25,30 +25,30 @@ public class StudentEmailService {
   private final CHESEmailService chesService;
 
   @Autowired
-  public StudentEmailService(final ApplicationProperties props, final CHESEmailService chesService) {
+  public UMPEmailService(final ApplicationProperties props, final CHESEmailService chesService) {
     this.props = props;
     this.chesService = chesService;
   }
 
-  public void sendCompletedRequestEmail(RequestCompleteEmailEntity email) {
+  public void sendCompletedRequestEmail(UMPRequestCompleteEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending completed PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateCompletedRequest().replace("'", "''"), email.getFirstName(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateCompletedRequestUMP().replace("'", "''"), email.getFirstName(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Completed PEN email sent successfully");
   }
 
 
-  public void sendRejectedRequestEmail(RequestRejectedEmailEntity email) {
+  public void sendRejectedRequestEmail(UMPRequestRejectedEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending rejected PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateRejectedRequest().replace("'", "''"), email.getRejectionReason(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateRejectedRequestUMP().replace("'", "''"), email.getRejectionReason(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Rejected PEN email sent successfully");
   }
 
-  public void sendAdditionalInfoEmail(RequestAdditionalInfoEmailEntity email) {
+  public void sendAdditionalInfoEmail(UMPAdditionalInfoEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending additional info PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateAdditionalInfo().replace("'", "''"), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateAdditionalInfoUMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Additional info PEN email sent successfully");
   }
 
@@ -58,9 +58,9 @@ public class StudentEmailService {
    *
    * @param emailVerificationEntity the payload containing the pen request id and email.
    */
-  public void sendVerifyEmail(RequestEmailVerificationEntity emailVerificationEntity) {
+  public void sendVerifyEmail(UMPRequestEmailVerificationEntity emailVerificationEntity) {
     log.debug("sending verify email.");
-    final String emailBody = MessageFormat.format(props.getEmailTemplateVerifyEmail().replace("'", "''"),
+    final String emailBody = MessageFormat.format(props.getEmailTemplateVerifyEmailUMP().replace("'", "''"),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken());
@@ -71,9 +71,9 @@ public class StudentEmailService {
 
   private String getLoginUrl(BaseEmailEntity baseEmailEntity) {
     if (BCSC.toString().equalsIgnoreCase(baseEmailEntity.getIdentityType())) {
-      return props.getLoginBcsc();
+      return props.getLoginBcscUMP();
     } else if (BASIC.toString().equalsIgnoreCase(baseEmailEntity.getIdentityType())) {
-      return props.getLoginBasic();
+      return props.getLoginBasicUMP();
     } else {
       throw new InvalidParameterException("IdentityType provided, could not be resolved. :: " + baseEmailEntity.getIdentityType());
     }
