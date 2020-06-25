@@ -20,22 +20,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface GetMyPenEmailEndpoint {
 
   @PostMapping("/complete")
-  @PreAuthorize("#oauth2.hasScope('SEND_PEN_REQUEST_EMAIL')")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send complete email", method = "sendCompletedPENRequestEmail", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendCompletedPENRequestEmail(@Validated @RequestBody GMPRequestCompleteEmailEntity gmpRequestCompleteEmailEntity, @RequestParam("demographicsChanged") boolean demographicsChanged);
 
   @PostMapping("/reject")
-  @PreAuthorize("#oauth2.hasScope('SEND_PEN_REQUEST_EMAIL')")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send reject notification email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendRejectedPENRequestEmail(@Validated @RequestBody GMPRequestRejectedEmailEntity gmpRequestRejectedEmailEntity);
 
   @PostMapping("/info")
-  @PreAuthorize("#oauth2.hasScope('SEND_PEN_REQUEST_EMAIL')")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send additional info request email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendAdditionalInfoRequestEmail(@Validated @RequestBody GMPRequestAdditionalInfoEmailEntity gmpRequestAdditionalInfoEmailEntity);
 
   @PostMapping("/verify")
-  @PreAuthorize("#oauth2.hasScope('SEND_PEN_REQUEST_EMAIL')")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "verify student email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> verifyEmail(@Validated @RequestBody GMPRequestEmailVerificationEntity gmpRequestEmailVerificationEntity);
 
