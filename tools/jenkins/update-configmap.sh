@@ -2,7 +2,7 @@ envValue=$1
 APP_NAME=$2
 PEN_NAMESPACE=$3
 COMMON_NAMESPACE=$4
-
+APP_NAME_UPPER=${APP_NAME^^}
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
 KCADM_FILE_BIN_FOLDER="/tmp/keycloak-9.0.3/bin"
