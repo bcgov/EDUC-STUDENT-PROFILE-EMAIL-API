@@ -18,8 +18,8 @@ import static lombok.AccessLevel.PRIVATE;
 @Slf4j
 public class StudentEmailService {
 
-  private static final String PERSONAL_EDUCATION_NUMBER_PEN_REQUEST = "Your Personal Education Number (PEN) Request";
-  private static final String VERIFY_EMAIL_SUBJECT = "Activate your GetMyPEN request within 24 hours of receiving this email";
+  private static final String STUDENT_PROFILE_REQUEST = "Your Personal Education Number (PEN) Request";
+  private static final String VERIFY_EMAIL_SUBJECT = "Activate your UpdateMyPENInfo request within 24 hours of receiving this email";
   private final ApplicationProperties props;
   @Getter(PRIVATE)
   private final CHESEmailService chesService;
@@ -33,7 +33,7 @@ public class StudentEmailService {
   public void sendCompletedRequestEmail(RequestCompleteEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending completed PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateCompletedRequest().replace("'", "''"), email.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateCompletedRequest().replace("'", "''"), email.getFirstName(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Completed PEN email sent successfully");
   }
 
@@ -41,14 +41,14 @@ public class StudentEmailService {
   public void sendRejectedRequestEmail(RequestRejectedEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending rejected PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateRejectedRequest().replace("'", "''"), email.getRejectionReason(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateRejectedRequest().replace("'", "''"), email.getRejectionReason(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Rejected PEN email sent successfully");
   }
 
   public void sendAdditionalInfoEmail(RequestAdditionalInfoEmailEntity email) {
     String loginUrl = getLoginUrl(email);
     log.debug("Sending additional info PEN email");
-    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateAdditionalInfo().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateAdditionalInfo().replace("'", "''"), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
     log.debug("Additional info PEN email sent successfully");
   }
 
