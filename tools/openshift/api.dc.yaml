@@ -38,6 +38,8 @@ objects:
               - name: tls-certs
                 mountPath: "/etc/tls-certs"
                 readOnly: true
+              - name: log-storage
+                mountPath: /logs
               readinessProbe:
                 tcpSocket:
                   port: 8080
