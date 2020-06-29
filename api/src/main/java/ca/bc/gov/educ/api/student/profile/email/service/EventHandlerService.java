@@ -71,6 +71,12 @@ public class EventHandlerService {
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           handleNotifyStudentPenRequestReturn(event);
           break;
+        case NOTIFY_STUDENT_PEN_REQUEST_REJECT:
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_REJECT event :: ");
+          log.trace(PAYLOAD_LOG, event.getEventPayload());
+          handleNotifyStudentPenRequestReject(event);
+          break;
+
         default:
           log.info("silently ignoring other events.");
           break;
@@ -147,4 +153,17 @@ public class EventHandlerService {
       }
     }
   }
+  private void handleNotifyStudentPenRequestReject(Event event) throws JsonProcessingException {
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    GMPRequestRejectedEmailEntity gmpRequestRejectedEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestRejectedEmailEntity.class, event.getEventPayload());
+    if (emailEvent.getEventStatus().equalsIgnoreCase(PENDING_EMAIL_ACK.toString())) {
+      try {
+        getGmpEmailService().sendRejectedPENRequestEmail(gmpRequestRejectedEmailEntity);
+        getEmailEventService().updateEventStatus(emailEvent.getEventId(), DB_COMMITTED.toString());
+      } catch (Exception ex) {
+        log.error("exception occurred while sending reject email for GMP", ex);
+      }
+    }
+  }
+
 }
