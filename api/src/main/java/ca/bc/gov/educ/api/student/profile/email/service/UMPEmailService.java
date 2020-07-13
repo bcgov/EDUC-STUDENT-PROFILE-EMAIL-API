@@ -32,24 +32,30 @@ public class UMPEmailService {
 
   public void sendCompletedRequestEmail(UMPRequestCompleteEmailEntity email) {
     String loginUrl = getLoginUrl(email);
-    log.debug("Sending completed PEN email");
+    log.debug("Sending completed UMP email");
     getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateCompletedRequestUMP().replace("'", "''"), email.getFirstName(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
-    log.debug("Completed PEN email sent successfully");
+    log.debug("Completed UMP email sent successfully");
   }
 
 
   public void sendRejectedRequestEmail(UMPRequestRejectedEmailEntity email) {
     String loginUrl = getLoginUrl(email);
-    log.debug("Sending rejected PEN email");
+    log.debug("Sending rejected UMP email");
     getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateRejectedRequestUMP().replace("'", "''"), email.getRejectionReason(), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
-    log.debug("Rejected PEN email sent successfully");
+    log.debug("Rejected UMP email sent successfully");
   }
 
   public void sendAdditionalInfoEmail(UMPAdditionalInfoEmailEntity email) {
     String loginUrl = getLoginUrl(email);
-    log.debug("Sending additional info PEN email");
+    log.debug("Sending additional info UMP email");
     getChesService().sendEmail(email, MessageFormat.format(props.getEmailTemplateAdditionalInfoUMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
-    log.debug("Additional info PEN email sent successfully");
+    log.debug("Additional info UMP email sent successfully");
+  }
+  public void sendStaleReturnedRequestNotificationEmail(UMPAdditionalInfoEmailEntity emailEntity) {
+    String loginUrl = getLoginUrl(emailEntity);
+    log.debug("Sending sendStaleReturnedRequestNotificationEmail info UMP email");
+    getChesService().sendEmail(emailEntity, MessageFormat.format(props.getEmailTemplateNotifyStaleReturnUMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), STUDENT_PROFILE_REQUEST);
+    log.debug("Stale Return Notification UMP email sent successfully");
   }
 
   /**
@@ -59,13 +65,13 @@ public class UMPEmailService {
    * @param emailVerificationEntity the payload containing the pen request id and email.
    */
   public void sendVerifyEmail(UMPRequestEmailVerificationEntity emailVerificationEntity) {
-    log.debug("sending verify email.");
+    log.debug("sending verify email for UMP.");
     final String emailBody = MessageFormat.format(props.getEmailTemplateVerifyEmailUMP().replace("'", "''"),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken());
     getChesService().sendEmail(emailVerificationEntity, emailBody, VERIFY_EMAIL_SUBJECT);
-    log.debug("verification email sent successfully.");
+    log.debug("verification email sent successfully for UMP.");
   }
 
 

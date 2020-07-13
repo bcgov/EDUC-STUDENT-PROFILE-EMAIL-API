@@ -39,4 +39,8 @@ public interface GetMyPenEmailEndpoint {
   @Operation(description = "verify student email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> verifyEmail(@Validated @RequestBody GMPRequestEmailVerificationEntity gmpRequestEmailVerificationEntity);
 
+  @PostMapping("/notify-stale-return")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @Operation(description = "notifies student that their request is in return state for a long time and they have to action it.", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> notifyStudentForStaleReturnedRequests(@Validated @RequestBody GMPRequestAdditionalInfoEmailEntity gmpRequestAdditionalInfoEmailEntity);
 }

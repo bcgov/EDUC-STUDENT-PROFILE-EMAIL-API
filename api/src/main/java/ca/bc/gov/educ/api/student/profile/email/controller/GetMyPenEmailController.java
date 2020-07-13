@@ -60,6 +60,12 @@ public class GetMyPenEmailController implements GetMyPenEmailEndpoint {
     return ResponseEntity.noContent().build();
   }
 
+  @Override
+  public ResponseEntity<Void> notifyStudentForStaleReturnedRequests(GMPRequestAdditionalInfoEmailEntity gmpRequestAdditionalInfoEmailEntity) {
+    service.sendStaleReturnedRequestNotificationEmail(gmpRequestAdditionalInfoEmailEntity);
+    return ResponseEntity.noContent().build();
+  }
+
   private void validateEmail(BaseEmailEntity emailEntity) {
     val validationResult = emailValidator.validateEmail(emailEntity);
     if (!validationResult.isEmpty()) {
