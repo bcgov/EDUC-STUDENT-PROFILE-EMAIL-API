@@ -42,4 +42,9 @@ public interface UpdateMyProfileEmailEndpoint {
   @Operation(description = "verify student email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> verifyEmail(@Validated @RequestBody UMPRequestEmailVerificationEntity umpRequestEmailVerificationEntity);
 
+  @PostMapping("/notify-stale-return")
+  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @Operation(description = "send additional info request email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> notifyStudentForStaleReturnedRequests(@Validated @RequestBody UMPAdditionalInfoEmailEntity umpAdditionalInfoEmailEntity);
+
 }

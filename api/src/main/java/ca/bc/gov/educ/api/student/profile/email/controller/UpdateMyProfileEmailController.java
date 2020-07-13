@@ -59,6 +59,12 @@ public class UpdateMyProfileEmailController implements UpdateMyProfileEmailEndpo
     return ResponseEntity.noContent().build();
   }
 
+  @Override
+  public ResponseEntity<Void> notifyStudentForStaleReturnedRequests(UMPAdditionalInfoEmailEntity umpAdditionalInfoEmailEntity) {
+    service.sendStaleReturnedRequestNotificationEmail(umpAdditionalInfoEmailEntity);
+    return ResponseEntity.noContent().build();
+  }
+
 
   private void validateEmail(BaseEmailEntity emailEntity) {
     val validationResult = emailValidator.validateEmail(emailEntity);

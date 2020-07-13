@@ -58,6 +58,13 @@ public class GMPEmailService {
     log.debug("Additional info PEN email sent successfully");
   }
 
+  public void sendStaleReturnedRequestNotificationEmail(GMPRequestAdditionalInfoEmailEntity penRequest) {
+    String loginUrl = getLoginUrl(penRequest);
+    log.debug("Sending sendStaleReturnedRequestNotificationEmail info GMP email");
+    getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateNotifyStaleReturnGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    log.debug("Stale Return Notification GMP email sent successfully");
+  }
+
   /**
    * This method is responsible to send verification email.
    * the replacement starts with index 0 , so there are eight replacements in the template.

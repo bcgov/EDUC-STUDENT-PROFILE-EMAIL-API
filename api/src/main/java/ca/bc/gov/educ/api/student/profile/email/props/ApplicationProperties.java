@@ -51,6 +51,8 @@ public class ApplicationProperties {
   @Value("${url.login.bcsc.ump}")
   private String loginBcscUMP;
 
+  @Value("${email.template.notify.stale.return.ump}")
+  private String emailTemplateNotifyStaleReturnUMP;
 
   //GMP fields
 
@@ -74,4 +76,7 @@ public class ApplicationProperties {
 
   @Value("${url.login.bcsc.gmp}")
   private String loginBcscGMP;
+
+  @Value("${email.template.notify.stale.return.gmp}")
+  private String emailTemplateNotifyStaleReturnGMP;
 }
