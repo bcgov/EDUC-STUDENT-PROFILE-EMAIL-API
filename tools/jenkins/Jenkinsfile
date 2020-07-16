@@ -7,25 +7,23 @@ pipeline{
       COMMON_NAMESPACE='mvubjx'
       TOOLS = "${NAMESPACE}-tools"
       DEV = "${NAMESPACE}-dev"
-      TEST = "${NAMESPACE}-test"
-      PROD = "${NAMESPACE}-prod"
 
       REPO_NAME = 'educ-student-profile-email-api'
       OWNER = 'bcgov'
       JOB_NAME = 'master'
-      TAG = 'dev'
+      TAG = 'latest'
+      TARGET_ENV = 'dev'
+      STAGING_ENV = 'Dev'
+      TARGET_ENVIRONMENT = "${NAMESPACE}-${TARGET_ENV}"
 
       APP_NAME = 'student-profile-email-api'
       APP_DOMAIN = 'pathfinder.gov.bc.ca'
 
-      SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
       SOURCE_REPO_REF = 'master'
       SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
 
       TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
       DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
-      TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
-      PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
       MIN_REPLICAS = "1"
       MAX_REPLICAS = "1"
       MIN_CPU = "30m"
@@ -93,7 +91,7 @@ pipeline{
 	stage('Promote and configure DEV') {
       steps{
         script{
-            extJSHelper.performEmailApiDeploy(STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL, MIN_REPLICAS, MAX_REPLICAS, MIN_CPU, MAX_CPU, MIN_MEM, MAX_MEM, TARGET_ENV, NAMESPACE)
+            extJSHelper.performEmailApiDeploy(STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL, MIN_REPLICAS, MAX_REPLICAS, MIN_CPU, MAX_CPU, MIN_MEM, MAX_MEM, TARGET_ENV, NAMESPACE, COMMON_NAMESPACE)
         }
       }
       post{
@@ -105,72 +103,5 @@ pipeline{
         }
       }
     }
-    stage('Create/Update Config Maps'){
-      environment {
-	     APP_NAME = "student-profile-email-api"
-      }
-      steps{
-        script{
-            dir('tools/jenkins'){
-                sh "bash ./download-kc.sh \"${NAMESPACE}\""
-            }
-        }
-        configMapSetup("${APP_NAME}","${APP_NAME}".toUpperCase(), NAMESPACE);
-        script{
-          dir('tools/jenkins'){
-            def configVars
-            sh "bash ./update-configmap.sh \"dev\" ${APP_NAME} ${NAMESPACE} ${COMMON_NAMESPACE}"
-          }
-        }
-        deployStageNoTag('Dev', DEV, DEV_HOST_ROUTE)
-      }
-    }
   }
-}
-
-def configMapSetup(String appName,String appNameUpper, String namespace){
-    script {
-	  
-      try{
-        sh( script: "oc project ${namespace}-dev", returnStdout: true)
-        sh( script: "oc describe configmaps ${appName}-dev-setup-config", returnStdout: true)
-        sh( script: "oc project ${namespace}-tools", returnStdout: true)
-        echo 'Config map already exists. Moving to next stage...'
-      } catch(e){
-          configProperties = input(
-          id: 'configProperties', message: "Please enter the required credentials to allow ${appName} to run:",
-          parameters: [
-              string(defaultValue: "",
-                      description: 'JDBC connect string for database',
-                      name: 'CHES_CLIENT_ID'),
-              string(defaultValue: "",
-                      description: "Username for ${appName} to connect to the database",
-                      name: "CHES_CLIENT_SECRET"),
-              string(defaultValue: "",
-                      description: "Password for ${appName} to connect to the database",
-                      name: "CHES_ENDPOINT_URL"),
-              string(defaultValue: "",
-                      description: "Password for ${appName} to connect to the database",
-                      name: "CHES_TOKEN_URL"),
-              string(defaultValue: "",
-                      description: 'JDBC connect string for database',
-                      name: 'DB_JDBC_CONNECT_STRING'),
-              string(defaultValue: "",
-                      description: "Username for ${appName} to connect to the database",
-                      name: "DB_USER"),
-              password(defaultValue: "",
-                      description: "Password for ${appName} to connect to the database",
-                      name: "DB_PWD"),
-              string(defaultValue: "",
-                description: "Token for ${appName} FluentBit sidecar to connect to the Splunk",
-                name: "SPLUNK_TOKEN"),
-          ])
-		sh """
-		  set +x
-		  echo Running curl command...
-		  oc create -n ${namespace}-dev configmap ${appName}-dev-setup-config --from-literal=SPLUNK_TOKEN_${appNameUpper}=${configProperties.SPLUNK_TOKEN} --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_${appNameUpper}=${configProperties.DB_USER} --from-literal=DB_PWD_${appNameUpper}=${configProperties.DB_PWD} --from-literal=CHES_CLIENT_ID=${configProperties.CHES_CLIENT_ID} --from-literal=CHES_TOKEN_URL=${configProperties.CHES_TOKEN_URL} --from-literal=CHES_ENDPOINT_URL=${configProperties.CHES_ENDPOINT_URL} --from-literal=CHES_CLIENT_SECRET=${configProperties.CHES_CLIENT_SECRET} --dry-run -o yaml | oc apply -f -
-		  oc project ${namespace}-tools
-		"""
-      }
-    }
 }
