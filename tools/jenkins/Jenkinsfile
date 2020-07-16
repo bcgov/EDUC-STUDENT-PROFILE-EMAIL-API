@@ -1,6 +1,7 @@
 pipeline{
    agent any
    environment{
+      extJSHelper = '';
       DEBUG_OUTPUT = 'false'
       NAMESPACE='c2mvws'      
       COMMON_NAMESPACE='mvubjx'
@@ -44,6 +45,8 @@ pipeline{
             echo 'DEBUG - All pipeline environment variables:'
             echo sh(returnStdout: true, script: 'env')
           }
+          sh "wget -O - https://raw.githubusercontent.com/bcgov/EDUC-INFRA-COMMON/master/openshift/common-deployment/deployHelpers.js > deployHelpers.js"
+          extJSHelper = evaluate readFile('deployHelpers.js')
         }
       }
     }
@@ -87,9 +90,11 @@ pipeline{
         }
       }
     }
-	stage('Promote to DEV') {
+	stage('Promote and configure DEV') {
       steps{
-        deployStage('Dev', DEV, DEV_HOST_ROUTE, 'dev')
+        script{
+            extJSHelper.performEmailApiDeploy(STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL, MIN_REPLICAS, MAX_REPLICAS, MIN_CPU, MAX_CPU, MIN_MEM, MAX_MEM, TARGET_ENV, NAMESPACE)
+        }
       }
       post{
         success{
@@ -168,69 +173,4 @@ def configMapSetup(String appName,String appNameUpper, String namespace){
 		"""
       }
     }
-}
-
-
-def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String tag) {
-
-  if (!stageEnv.equalsIgnoreCase('Dev')) {
-    input("Deploy to ${projectEnv}?")
-  }
-
-  openshift.withCluster() {
-    openshift.withProject(projectEnv) {
-      echo "Tagging image"
-      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${tag}")
-      def dcTemplate = openshift.process('-f',
-        'tools/openshift/api.dc.yaml',
-        "REPO_NAME=${REPO_NAME}",
-        "JOB_NAME=${JOB_NAME}",
-        "NAMESPACE=${projectEnv}",
-        "APP_NAME=${APP_NAME}",
-        "HOST_ROUTE=${hostRouteEnv}",
-        "TAG=${tag}",
-		"MIN_REPLICAS=${MIN_REPLICAS}",
-	    "MAX_REPLICAS=${MAX_REPLICAS}",
-        "MIN_CPU=${MIN_CPU}",
-		"MAX_CPU=${MAX_CPU}",
-        "MIN_MEM=${MIN_MEM}",
-		"MAX_MEM=${MAX_MEM}"
-      )
-
-      echo "Applying Deployment ${REPO_NAME}"
-      def dc = openshift.apply(dcTemplate).narrow('dc')
-    }
-  }
-}
-
-def deployStageNoTag(String stageEnv, String projectEnv, String hostRouteEnv) {
-
-  if (!stageEnv.equalsIgnoreCase('Dev')) {
-    input("Deploy to ${projectEnv}?")
-  }
-
-  openshift.withCluster() {
-    openshift.withProject(projectEnv) {
-      echo "Tagging image"
-      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${tag}")
-      def dcTemplate = openshift.process('-f',
-        'tools/openshift/api.dc.yaml',
-        "REPO_NAME=${REPO_NAME}",
-        "JOB_NAME=${JOB_NAME}",
-        "NAMESPACE=${projectEnv}",
-        "APP_NAME=${APP_NAME}",
-        "HOST_ROUTE=${hostRouteEnv}",
-        "TAG=${tag}",
-		"MIN_REPLICAS=${MIN_REPLICAS}",
-	    "MAX_REPLICAS=${MAX_REPLICAS}",
-        "MIN_CPU=${MIN_CPU}",
-		"MAX_CPU=${MAX_CPU}",
-        "MIN_MEM=${MIN_MEM}",
-		"MAX_MEM=${MAX_MEM}"
-      )
-
-      echo "Applying Deployment ${REPO_NAME}"
-      def dc = openshift.apply(dcTemplate).narrow('dc')
-    }
-  }
 }
