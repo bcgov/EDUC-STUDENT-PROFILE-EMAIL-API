@@ -18,7 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Slf4j
 public class UMPEmailService {
 
-  private static final String STUDENT_PROFILE_REQUEST = "Your Personal Education Number (PEN) Request";
+  private static final String STUDENT_PROFILE_REQUEST = "Your Personal Education Number(PEN) Info Update Request";
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your UpdateMyPENInfo request within 24 hours of receiving this email";
   private final ApplicationProperties props;
   @Getter(PRIVATE)
