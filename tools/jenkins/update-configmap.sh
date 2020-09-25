@@ -1,4 +1,4 @@
-0e0nvValue=$1
+envValue=$1
 APP_NAME=$2
 PEN_NAMESPACE=$3
 COMMON_NAMESPACE=$4
