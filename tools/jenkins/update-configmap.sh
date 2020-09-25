@@ -1,4 +1,4 @@
-envValue=$1
+0e0nvValue=$1
 APP_NAME=$2
 PEN_NAMESPACE=$3
 COMMON_NAMESPACE=$4
@@ -30,10 +30,10 @@ SPLUNK_TOKEN=$(oc -o json get configmaps "${APP_NAME}"-"${envValue}"-setup-confi
 
 if [ "$envValue" != "prod" ]
 then
-    URL_LOGIN_BASIC_GMP=https://student-profile-$PEN_NAMESPACE-$envValue.pathfinder.gov.bc.ca/api/auth/login_bceid_gmp
-    URL_LOGIN_BASIC_UMP=https://student-profile-$PEN_NAMESPACE-$envValue.pathfinder.gov.bc.ca/api/auth/login_bceid_ump
-    URL_LOGIN_BCSC_GMP=https://student-profile-$PEN_NAMESPACE-$envValue.pathfinder.gov.bc.ca/api/auth/login_bcsc_gmp
-    URL_LOGIN_BCSC_UMP=https://student-profile-$PEN_NAMESPACE-$envValue.pathfinder.gov.bc.ca/api/auth/login_bcsc_ump
+    URL_LOGIN_BASIC_GMP=https://$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_gmp
+    URL_LOGIN_BASIC_UMP=https://$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_ump
+    URL_LOGIN_BCSC_GMP=https://$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_gmp
+    URL_LOGIN_BCSC_UMP=https://$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_ump
 else
     URL_LOGIN_BASIC_GMP=https://getmypen.gov.bc.ca/api/auth/login_bceid_gmp
     URL_LOGIN_BASIC_UMP=https://getmypen.gov.bc.ca/api/auth/login_bceid_ump
