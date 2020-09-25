@@ -4,8 +4,8 @@ package ca.bc.gov.educ.api.student.profile.email.schedulers;
 import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.constants.EventType;
 import ca.bc.gov.educ.api.student.profile.email.messaging.MessagePublisher;
-import ca.bc.gov.educ.api.student.profile.email.model.Event;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.Event;
 import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequestEmailEventRepository;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.DB_COMMITTED;
@@ -26,8 +28,10 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Component
 @Slf4j
+@SuppressWarnings("java:S2142")
 public class EventTaskScheduler {
 
+  private final ExecutorService executorService = Executors.newFixedThreadPool(1);
   @Getter(PRIVATE)
   private final MessagePublisher messagePubSub;
   @Getter(PRIVATE)
@@ -42,7 +46,11 @@ public class EventTaskScheduler {
   @Scheduled(cron = "0/1 * * * * *")
   @SchedulerLock(name = "EventTablePoller",
       lockAtLeastFor = "900ms", lockAtMostFor = "950ms")
-  public void pollEventTableAndPublish() throws InterruptedException, IOException, TimeoutException {
+  public void pollEventTableAndPublish() {
+    executorService.execute(this::findAndUpdateUnprocessedRecords);
+  }
+
+  private void findAndUpdateUnprocessedRecords() {
     var events = getEmailEventRepository().findByEventStatus(DB_COMMITTED.toString());
     if (!events.isEmpty()) {
       for (var event : events) {
@@ -53,7 +61,6 @@ public class EventTaskScheduler {
           getMessagePubSub().dispatchMessage(PROFILE_REQUEST_EMAIL_API_TOPIC.toString(), createOutboxEvent(event));
         } catch (InterruptedException | TimeoutException | IOException e) {
           log.error("exception occurred", e);
-          throw e;
         }
       }
     } else {
