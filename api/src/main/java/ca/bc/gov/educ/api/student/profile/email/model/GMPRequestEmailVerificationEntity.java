@@ -1,14 +1,12 @@
 package ca.bc.gov.educ.api.student.profile.email.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 @Setter

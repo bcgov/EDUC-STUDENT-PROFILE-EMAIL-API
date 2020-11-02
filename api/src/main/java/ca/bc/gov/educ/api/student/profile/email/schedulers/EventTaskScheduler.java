@@ -43,9 +43,9 @@ public class EventTaskScheduler {
     this.emailEventRepository = emailEventRepository;
   }
 
-  @Scheduled(cron = "0/1 * * * * *")
+  @Scheduled(cron = "${scheduled.jobs.poll.events}")  // "0/1 * * * * *"
   @SchedulerLock(name = "EventTablePoller",
-      lockAtLeastFor = "900ms", lockAtMostFor = "950ms")
+      lockAtLeastFor = "${scheduled.jobs.poll.events.lockAtLeastFor}", lockAtMostFor = "${scheduled.jobs.poll.events.lockAtMostFor}")
   public void pollEventTableAndPublish() {
     executorService.execute(this::findAndUpdateUnprocessedRecords);
   }
