@@ -11,11 +11,11 @@
   <properties>
     <sonar.language>java</sonar.language>
     <sonar.exclusions>src/main/resources/**,
-      src/main/java/ca/bc/gov/educ/api/student/email/mappers/**,
-      src/main/java/ca/bc/gov/educ/api/student/email/exception/**,
-      src/main/java/ca/bc/gov/educ/api/student/email/model/**,
-      src/main/java/ca/bc/gov/educ/api/student/email/struct/**,
-      src/main/java/ca/bc/gov/educ/api/student/email/endpoint/**
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/mappers/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/exception/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/model/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/struct/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/endpoint/**
     </sonar.exclusions>
     <java.version>11</java.version>
 
