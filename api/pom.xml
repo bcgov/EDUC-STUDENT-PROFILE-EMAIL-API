@@ -15,7 +15,10 @@
       src/main/java/ca/bc/gov/educ/api/student/profile/email/exception/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/model/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/struct/**,
-      src/main/java/ca/bc/gov/educ/api/student/profile/email/endpoint/**
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/endpoint/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/constant/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/utils/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/messaging/**
     </sonar.exclusions>
     <java.version>11</java.version>
 
