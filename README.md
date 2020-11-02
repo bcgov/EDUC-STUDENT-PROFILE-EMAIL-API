@@ -1,3 +1,9 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=alert_status)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=coverage)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=ncloc)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=bugs)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-DIGITALID-API)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API&metric=security_rating)](https://sonarcloud.io/dashboard?id=bcgov_EDUC-STUDENT-PROFILE-EMAIL-API)
 # EDUC-STUDENT-PROFILE-EMAIL-API
 An API for the sending specific emails for the Ministry of Education.
 
