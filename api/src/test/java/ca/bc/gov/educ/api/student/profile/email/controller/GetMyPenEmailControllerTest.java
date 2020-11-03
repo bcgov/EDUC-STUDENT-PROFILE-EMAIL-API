@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 
+import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -73,6 +74,29 @@ public class GetMyPenEmailControllerTest {
     entity.setDemographicsChanged(true);
     this.mockMvc.perform(post("/gmp/complete?demographicsChanged=true").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
+
+  }
+
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendCompletedPENRequestEmail_givenValidPayload_shouldSendEmail3() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createEntity();
+    entity.setDemographicsChanged(false);
+    entity.setIdentityType(BASIC.name());
+    this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
+
+  }
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendCompletedPENRequestEmail_givenInValidPayload_shouldReturnError() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createEntity();
+    entity.setDemographicsChanged(false);
+    entity.setEmailAddress("testemail");
+    this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
 
   }
 

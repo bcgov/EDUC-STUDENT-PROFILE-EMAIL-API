@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 
+import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -63,10 +64,30 @@ public class UpdateMyProfileEmailControllerTest {
 
   @Test
   @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
-  public void sendRejectedRequestEmail_givenValidPayload_shouldSendEmail() throws Exception {
+  public void sendCompletedRequestEmail_givenValidPayload_shouldSendEmail2() throws Exception {
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
     var entity = createEntity();
+    entity.setIdentityType(BASIC.name());
     this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
+  }
+
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendCompletedRequestEmail_givenValidPayload_shouldReturnError() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createEntity();
+    entity.setIdentityType(BASIC.name());
+    entity.setEmailAddress("invalidemail");
+    this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
+  }
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendRejectedRequestEmail_givenValidPayload_shouldSendEmail() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createRejectedEntity();
+    this.mockMvc.perform(post("/ump/reject").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
   }
 
@@ -74,8 +95,8 @@ public class UpdateMyProfileEmailControllerTest {
   @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
   public void sendAdditionalInfoRequestEmail_givenValidPayload_shouldSendEmail() throws Exception {
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
-    var entity = createRejectedEntity();
-    this.mockMvc.perform(post("/ump/reject").contentType(MediaType.APPLICATION_JSON)
+    var entity = createAdditionalInfoEntity();
+    this.mockMvc.perform(post("/ump/info").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
   }
 
