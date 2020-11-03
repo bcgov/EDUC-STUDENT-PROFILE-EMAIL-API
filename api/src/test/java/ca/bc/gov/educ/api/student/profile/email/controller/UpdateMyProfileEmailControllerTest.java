@@ -80,7 +80,7 @@ public class UpdateMyProfileEmailControllerTest {
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
     var entity = createEntity();
     entity.setIdentityType(BASIC.name());
-    entity.setEmailAddress("invalidemail");
+    entity.setEmailAddress("a@b.c");
     this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
   }

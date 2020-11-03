@@ -96,7 +96,7 @@ public class GetMyPenEmailControllerTest {
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
     var entity = createEntity();
     entity.setDemographicsChanged(false);
-    entity.setEmailAddress("testemail");
+    entity.setEmailAddress("a@b.c");
     this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
 
