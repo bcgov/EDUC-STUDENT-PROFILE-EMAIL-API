@@ -82,6 +82,17 @@ public class UpdateMyProfileEmailControllerTest {
     this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
   }
+
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendCompletedRequestEmail_givenValidPayload_shouldReturnError2() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createEntity();
+    entity.setIdentityType("error");
+    entity.setEmailAddress("invalidemail");
+    this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
+  }
   @Test
   @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
   public void sendRejectedRequestEmail_givenValidPayload_shouldSendEmail() throws Exception {

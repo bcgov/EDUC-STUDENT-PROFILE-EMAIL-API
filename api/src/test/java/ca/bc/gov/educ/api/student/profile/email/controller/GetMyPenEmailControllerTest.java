@@ -49,7 +49,7 @@ public class GetMyPenEmailControllerTest {
   RestTemplate restTemplate;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
     mockMvc = MockMvcBuilders.standaloneSetup(controller)
         .setControllerAdvice(new RestExceptionHandler()).build();
@@ -88,6 +88,8 @@ public class GetMyPenEmailControllerTest {
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
 
   }
+
+
   @Test
   @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
   public void sendCompletedPENRequestEmail_givenInValidPayload_shouldReturnError() throws Exception {
@@ -95,6 +97,19 @@ public class GetMyPenEmailControllerTest {
     var entity = createEntity();
     entity.setDemographicsChanged(false);
     entity.setEmailAddress("testemail");
+    this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
+
+  }
+
+
+  @Test
+  @WithMockOAuth2Scope(scope = "SEND_STUDENT_PROFILE_EMAIL")
+  public void sendCompletedPENRequestEmail_givenInValidPayload_shouldReturnError2() throws Exception {
+    when(restUtils.getRestTemplate()).thenReturn(restTemplate);
+    var entity = createEntity();
+    entity.setDemographicsChanged(false);
+    entity.setIdentityType("error");
     this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
 
