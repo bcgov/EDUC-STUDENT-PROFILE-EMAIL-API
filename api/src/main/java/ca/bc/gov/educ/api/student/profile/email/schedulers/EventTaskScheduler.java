@@ -50,7 +50,7 @@ public class EventTaskScheduler {
     executorService.execute(this::findAndUpdateUnprocessedRecords);
   }
 
-  private void findAndUpdateUnprocessedRecords() {
+  protected void findAndUpdateUnprocessedRecords() {
     var events = getEmailEventRepository().findByEventStatus(DB_COMMITTED.toString());
     if (!events.isEmpty()) {
       for (var event : events) {

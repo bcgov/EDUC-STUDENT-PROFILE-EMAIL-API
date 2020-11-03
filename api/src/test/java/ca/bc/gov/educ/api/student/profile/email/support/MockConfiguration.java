@@ -38,16 +38,6 @@ public class MockConfiguration {
     return Mockito.mock(MessageSubscriber.class);
   }
 
-  /**
-   * Event task scheduler event task scheduler.
-   *
-   * @return the event task scheduler
-   */
-  @Bean
-  @Primary
-  public EventTaskScheduler eventTaskScheduler() {
-    return Mockito.mock(EventTaskScheduler.class);
-  }
 
   @Bean
   @Primary

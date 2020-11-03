@@ -1,7 +1,10 @@
 package ca.bc.gov.educ.api.student.profile.email.controller;
 
 import ca.bc.gov.educ.api.student.profile.email.exception.RestExceptionHandler;
-import ca.bc.gov.educ.api.student.profile.email.model.*;
+import ca.bc.gov.educ.api.student.profile.email.model.UMPAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestRejectedEmailEntity;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.support.WithMockOAuth2Scope;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -89,7 +91,6 @@ public class UpdateMyProfileEmailControllerTest {
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
     var entity = createEntity();
     entity.setIdentityType("error");
-    entity.setEmailAddress("invalidemail");
     this.mockMvc.perform(post("/ump/complete").contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
   }
