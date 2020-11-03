@@ -138,6 +138,7 @@ public class EventHandlerServiceTest {
 
   @Test
   public void handleEvent_givenNotifyStudentProfileRequestReturn_shouldSendReturnEmail2() throws JsonProcessingException {
+    var invocations = mockingDetails(restTemplate).getInvocations().size();
     var sagaId = UUID.randomUUID();
     eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN)
         .eventPayload(JsonUtil.getJsonStringFromObject(createAdditionalInfoUMPEntity()))
@@ -151,7 +152,7 @@ public class EventHandlerServiceTest {
         .build());
     var record = repository.findBySagaIdAndEventType(sagaId,EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN.toString());
     assertThat(record).isPresent();
-    verify(restTemplate, atMostOnce()).postForObject(eq(properties.getChesEndpointURL()), any(), any());
+    verify(restTemplate, atMost(invocations+1)).postForObject(eq(properties.getChesEndpointURL()), any(), any());
   }
 
   GMPRequestCompleteEmailEntity createCompletedEmailEntity() {
