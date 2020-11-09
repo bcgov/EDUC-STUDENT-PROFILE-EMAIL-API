@@ -6,17 +6,17 @@ APP_NAME_UPPER=${APP_NAME^^}
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
 KCADM_FILE_BIN_FOLDER="/tmp/keycloak-9.0.3/bin"
-SOAM_KC=$COMMON_NAMESPACE-$envValue.pathfinder.gov.bc.ca
+SOAM_KC=soam-$envValue.apps.silver.devops.gov.bc.ca
 NATS_CLUSTER=educ_nats_cluster
 NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 
 oc project $COMMON_NAMESPACE-$envValue
 SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
 SOAM_KC_LOAD_USER_PASS=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
-URL_LOGIN_BASIC_GMP="https://student-profile-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bceid_gmp"
-URL_LOGIN_BASIC_UMP="https://student-profile-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bceid_ump"
-URL_LOGIN_BCSC_GMP="https://student-profile-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bcsc_gmp"
-URL_LOGIN_BCSC_UMP="https://student-profile-${PEN_NAMESPACE}-${envValue}.pathfinder.gov.bc.ca/api/auth/login_bcsc_ump"
+URL_LOGIN_BASIC_GMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_gmp"
+URL_LOGIN_BASIC_UMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_ump"
+URL_LOGIN_BCSC_GMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_gmp"
+URL_LOGIN_BCSC_UMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_ump"
 
 oc project $PEN_NAMESPACE-$envValue
 CHES_CLIENT_ID=$(oc -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_CLIENT_ID\": \"\(.*\)\",/\1/p")
