@@ -4,7 +4,7 @@ pipeline{
       extJSHelper = '';
       DEBUG_OUTPUT = 'false'
       NAMESPACE='8878b4'
-      COMMON_NAMESPACE='76e61b'
+      COMMON_NAMESPACE='75e61b'
       TOOLS = "${NAMESPACE}-tools"
       DEV = "${NAMESPACE}-dev"
 
