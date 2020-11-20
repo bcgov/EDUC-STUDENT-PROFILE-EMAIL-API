@@ -25,12 +25,6 @@ public class ApplicationProperties {
   @Value("${ches.endpoint.url}")
   private String chesEndpointURL;
 
-  @Value("${nats.streaming.server.url}")
-  private String natsUrl;
-
-  @Value("${nats.streaming.server.clusterId}")
-  private String natsClusterId;
-
   //UMP fields
 
   @Value("${email.template.completedRequest.ump}")
