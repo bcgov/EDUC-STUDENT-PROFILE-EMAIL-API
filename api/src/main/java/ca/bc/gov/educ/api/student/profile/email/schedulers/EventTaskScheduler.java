@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.DB_COMMITTED;
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventType.PROFILE_REQUEST_EMAIL_API_EVENT_OUTBOX_PROCESSED;
@@ -59,7 +58,7 @@ public class EventTaskScheduler {
             getMessagePubSub().dispatchMessage(event.getReplyChannel(), penRequestEmailAPIEventProcessed(event));
           }
           getMessagePubSub().dispatchMessage(PROFILE_REQUEST_EMAIL_API_TOPIC.toString(), createOutboxEvent(event));
-        } catch (InterruptedException | TimeoutException | IOException e) {
+        } catch (IOException e) {
           log.error("exception occurred", e);
         }
       }
