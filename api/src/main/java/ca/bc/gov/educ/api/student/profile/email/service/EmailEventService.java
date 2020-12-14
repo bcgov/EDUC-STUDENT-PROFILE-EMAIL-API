@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome.STUDENT_NOTIFIED;
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.DB_COMMITTED;
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
+import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.*;
 import static ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService.*;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -50,7 +49,7 @@ public class EmailEventService {
       log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_PAYLOAD, event);
       penRequestEvent = emailEventEntityOptional.get();
-      penRequestEvent.setEventStatus(DB_COMMITTED.toString());
+      penRequestEvent.setEventStatus(MESSAGE_PUBLISHED.toString());
       return getEmailEventRepository().save(penRequestEvent);
     }
     return emailEventEntityOptional.get();

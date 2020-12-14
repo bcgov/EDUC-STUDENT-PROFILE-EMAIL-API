@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.messaging;
 
 import ca.bc.gov.educ.api.student.profile.email.model.Event;
-import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService;
+import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import io.nats.client.Connection;
 import io.nats.client.Message;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_REQUEST_EMAIL_API_TOPIC;
 
@@ -19,11 +21,12 @@ import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_
 @Slf4j
 public class MessageSubscriber extends MessagePubSub {
 
-  private final EventHandlerService eventHandlerService;
+  private final EventHandlerDelegatorService eventHandlerDelegatorService;
+  private final Executor executor = Executors.newFixedThreadPool(6);
 
   @Autowired
-  public MessageSubscriber(final Connection con, EventHandlerService eventHandlerService) {
-    this.eventHandlerService = eventHandlerService;
+  public MessageSubscriber(final Connection con, EventHandlerDelegatorService eventHandlerDelegatorService) {
+    this.eventHandlerDelegatorService = eventHandlerDelegatorService;
     super.connection = con;
   }
 
@@ -46,12 +49,10 @@ public class MessageSubscriber extends MessagePubSub {
   private MessageHandler onMessage() {
     return (Message message) -> {
       if (message != null) {
-        log.info("Message received is :: {} ", message);
         try {
           var eventString = new String(message.getData());
           var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-          eventHandlerService.handleEvent(event);
-          log.debug("Event is :: {}", event);
+          executor.execute(() -> eventHandlerDelegatorService.handleEvent(event));
         } catch (final Exception e) {
           log.error("Exception ", e);
         }

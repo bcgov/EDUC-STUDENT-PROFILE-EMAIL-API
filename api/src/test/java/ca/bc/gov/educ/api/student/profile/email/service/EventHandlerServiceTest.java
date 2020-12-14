@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -32,7 +32,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class EventHandlerServiceTest {
 
   @Autowired
-  EventHandlerService eventHandlerService;
+  EventHandlerDelegatorService eventHandlerService;
 
   @Autowired
   StudentProfileRequestEmailEventRepository repository;
@@ -47,7 +47,7 @@ public class EventHandlerServiceTest {
 
   @Before
   public void setUp() {
-    initMocks(this);
+    openMocks(this);
     when(restUtils.getRestTemplate()).thenReturn(restTemplate);
   }
 
