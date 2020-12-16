@@ -12,6 +12,7 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,8 +34,9 @@ public class EmailEventEntity {
   private UUID eventId;
 
   @NotNull(message = "eventPayload cannot be null")
-  @Column(name = "EVENT_PAYLOAD", length = 4000)
-  private String eventPayload;
+  @Lob
+  @Column(name = "EVENT_PAYLOAD")
+  private byte[] eventPayloadBytes;
 
   @NotNull(message = "eventStatus cannot be null")
   @Column(name = "EVENT_STATUS")
@@ -67,5 +69,22 @@ public class EmailEventEntity {
 
   @Column(name = "REPLY_CHANNEL")
   private String replyChannel;
+
+  public String getEventPayload() {
+    return new String(getEventPayloadBytes(), StandardCharsets.UTF_8);
+  }
+
+  public void setEventPayload(String eventPayload) {
+    setEventPayloadBytes(eventPayload.getBytes(StandardCharsets.UTF_8));
+  }
+
+  public static class EmailEventEntityBuilder {
+    byte[] eventPayloadBytes;
+
+    public EmailEventEntity.EmailEventEntityBuilder eventPayload(String eventPayload) {
+      this.eventPayloadBytes = eventPayload.getBytes(StandardCharsets.UTF_8);
+      return this;
+    }
+  }
 }
 
