@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class EventHandlerDelegatorService {
 
   public static final String PAYLOAD_LOG = "payload is :: {}";
+  public static final String RESPONSE_LOG = "responding back to NATS on {} ";
   @Getter(PRIVATE)
   private final MessagePublisher messagePublisher;
 
@@ -22,7 +23,7 @@ public class EventHandlerDelegatorService {
 
 
   @Autowired
-  public EventHandlerDelegatorService(MessagePublisher messagePublisher, EventHandlerService eventHandlerService){
+  public EventHandlerDelegatorService(MessagePublisher messagePublisher, EventHandlerService eventHandlerService) {
     this.messagePublisher = messagePublisher;
     this.eventHandlerService = eventHandlerService;
   }
@@ -35,36 +36,42 @@ public class EventHandlerDelegatorService {
           log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestComplete(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PROFILE_REQUEST_RETURN:
           log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_RETURN event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestReturn(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PROFILE_REQUEST_REJECT:
           log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_REJECT event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestReject(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_COMPLETE:
           log.info("received NOTIFY_STUDENT_PEN_REQUEST_COMPLETE event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestComplete(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_RETURN:
           log.info("received NOTIFY_STUDENT_PEN_REQUEST_RETURN event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestReturn(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_REJECT:
           log.info("received NOTIFY_STUDENT_PEN_REQUEST_REJECT event :: ");
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestReject(event);
+          log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         default:
