@@ -23,6 +23,7 @@
       src/main/java/ca/bc/gov/educ/api/student/profile/email/constants/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/rest/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/schedulers/**,
+      src/main/java/ca/bc/gov/educ/api/student/profile/email/validator/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/StudentEmailApiResourceApplication.java
     </sonar.exclusions>
     <java.version>11</java.version>

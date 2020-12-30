@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
-import ca.bc.gov.educ.api.student.profile.email.model.Event;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.model.Event;
 import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequestEmailEventRepository;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +14,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome.STUDENT_NOTIFIED;
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.*;
+import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
+import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
 import static ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService.*;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -80,5 +82,9 @@ public class EmailEventService {
         .eventOutcome(event.getEventOutcome().toString())
         .replyChannel(event.getReplyTo())
         .build();
+  }
+
+  public List<EmailEventEntity> getPendingEmailEvents(LocalDateTime dateTimeToCompare) {
+    return emailEventRepository.findByEventStatusAndCreateDateBefore(PENDING_EMAIL_ACK.getCode(), dateTimeToCompare);
   }
 }
