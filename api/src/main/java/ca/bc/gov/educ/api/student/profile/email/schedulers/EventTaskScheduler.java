@@ -45,7 +45,7 @@ public class EventTaskScheduler {
   @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "50s", lockAtMostFor = "58s")
   public void checkAndSendEmails() {
     LockAssert.assertLocked();
-    LocalDateTime dateTimeToCompare = LocalDateTime.now().minusMinutes(2);
+    LocalDateTime dateTimeToCompare = LocalDateTime.now().minusMinutes(5);
     var unsentEmailEvents = getEmailEventService().getPendingEmailEvents(dateTimeToCompare);
     if (!unsentEmailEvents.isEmpty()) {
       log.info("found :: {} events, for which email is still not sent, retrying...", unsentEmailEvents.size());
