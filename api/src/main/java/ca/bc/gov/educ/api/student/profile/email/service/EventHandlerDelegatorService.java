@@ -33,42 +33,42 @@ public class EventHandlerDelegatorService {
     try {
       switch (event.getEventType()) {
         case NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE:
-          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE event :: ");
+          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestComplete(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PROFILE_REQUEST_RETURN:
-          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_RETURN event :: ");
+          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_RETURN event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestReturn(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PROFILE_REQUEST_REJECT:
-          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_REJECT event :: ");
+          log.info("received NOTIFY_STUDENT_PROFILE_REQUEST_REJECT event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentProfileRequestReject(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_COMPLETE:
-          log.info("received NOTIFY_STUDENT_PEN_REQUEST_COMPLETE event :: ");
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_COMPLETE event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestComplete(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_RETURN:
-          log.info("received NOTIFY_STUDENT_PEN_REQUEST_RETURN event :: ");
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_RETURN event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestReturn(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_STUDENT_PEN_REQUEST_REJECT:
-          log.info("received NOTIFY_STUDENT_PEN_REQUEST_REJECT event :: ");
+          log.info("received NOTIFY_STUDENT_PEN_REQUEST_REJECT event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = getEventHandlerService().handleNotifyStudentPenRequestReject(event);
           log.info(RESPONSE_LOG, event.getReplyTo());
