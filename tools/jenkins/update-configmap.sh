@@ -41,6 +41,21 @@ else
     URL_LOGIN_BCSC_UMP=https://getmypen.gov.bc.ca/api/auth/login_bcsc_ump
 fi
 
+if [ "$envValue" == "dev" ]
+then
+    URL_LOGIN_BASIC_GMP=https://test.getmypen.gov.bc.ca/api/auth/login_bceid_gmp
+    URL_LOGIN_BASIC_UMP=https://test.getmypen.gov.bc.ca/api/auth/login_bceid_ump
+    URL_LOGIN_BCSC_GMP=https://test.getmypen.gov.bc.ca/api/auth/login_bcsc_gmp
+    URL_LOGIN_BCSC_UMP=https://test.getmypen.gov.bc.ca/api/auth/login_bcsc_ump
+fi
+
+if [ "$envValue" != "test" ]
+then
+    URL_LOGIN_BASIC_GMP=https://uat.getmypen.gov.bc.ca/api/auth/login_bceid_gmp
+    URL_LOGIN_BASIC_UMP=https://uat.getmypen.gov.bc.ca/api/auth/login_bceid_ump
+    URL_LOGIN_BCSC_GMP=https://uat.getmypen.gov.bc.ca/api/auth/login_bcsc_gmp
+    URL_LOGIN_BCSC_UMP=https://uat.getmypen.gov.bc.ca/api/auth/login_bcsc_ump
+fi
 ###########################################################
 #Fetch the public key
 ###########################################################
