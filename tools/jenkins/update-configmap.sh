@@ -1,5 +1,12 @@
 echo Starting
 
+echo Starting1 $1
+echo Starting2 $2
+echo Starting3 $3
+echo Starting4 $4
+
+
+
 envValue=$1
 APP_NAME=$2
 PEN_NAMESPACE=$3
