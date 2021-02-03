@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.support;
 
 import ca.bc.gov.educ.api.student.profile.email.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.student.profile.email.messaging.MessageSubscriber;
+import ca.bc.gov.educ.api.student.profile.email.messaging.NatsConnection;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import io.nats.client.Connection;
 import org.mockito.Mockito;
@@ -57,4 +58,11 @@ public class MockConfiguration {
   public Connection connection() {
     return Mockito.mock(Connection.class);
   }
+
+  @Bean
+  @Primary
+  public NatsConnection natsConnection() {
+    return Mockito.mock(NatsConnection.class);
+  }
+
 }
