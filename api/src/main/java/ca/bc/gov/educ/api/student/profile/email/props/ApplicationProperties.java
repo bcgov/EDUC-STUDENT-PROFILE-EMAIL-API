@@ -73,4 +73,13 @@ public class ApplicationProperties {
 
   @Value("${email.template.notify.stale.return.gmp}")
   private String emailTemplateNotifyStaleReturnGMP;
+
+  @Value("${nats.server}")
+  private String server;
+
+  @Value("${nats.maxReconnect}")
+  private int maxReconnect;
+
+  @Value("${nats.connectionName}")
+  private String connectionName;
 }

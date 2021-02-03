@@ -19,15 +19,16 @@ import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_
 
 @Component
 @Slf4j
-public class MessageSubscriber extends MessagePubSub {
+public class MessageSubscriber {
 
   private final EventHandlerDelegatorService eventHandlerDelegatorService;
   private final Executor executor = Executors.newFixedThreadPool(6);
+  private final Connection connection;
 
   @Autowired
   public MessageSubscriber(final Connection con, EventHandlerDelegatorService eventHandlerDelegatorService) {
     this.eventHandlerDelegatorService = eventHandlerDelegatorService;
-    super.connection = con;
+    this.connection = con;
   }
 
   /**
