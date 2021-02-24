@@ -2,8 +2,8 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.student.profile.email.model.*;
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,41 +27,41 @@ public class GMPEmailService {
   private final CHESEmailService chesEmailService;
 
   @Autowired
-  public GMPEmailService(final ApplicationProperties props, CHESEmailService chesEmailService) {
+  public GMPEmailService(final ApplicationProperties props, final CHESEmailService chesEmailService) {
     this.props = props;
     this.chesEmailService = chesEmailService;
   }
 
-  public void sendCompletedPENRequestEmail(GMPRequestCompleteEmailEntity penRequest, boolean demographicsChanged) {
-    String loginUrl = getLoginUrl(penRequest);
+  public void sendCompletedPENRequestEmail(final GMPRequestCompleteEmailEntity penRequest, final boolean demographicsChanged) {
+    final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending completed PEN email");
     if (demographicsChanged) {
-      getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateCompleteRequestDemographicChangeGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+      this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateCompleteRequestDemographicChangeGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
     } else {
-      getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateCompletedRequestGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+      this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateCompletedRequestGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
     }
     log.debug("Completed PEN email sent successfully");
   }
 
 
-  public void sendRejectedPENRequestEmail(GMPRequestRejectedEmailEntity penRequest) {
-    String loginUrl = getLoginUrl(penRequest);
+  public void sendRejectedPENRequestEmail(final GMPRequestRejectedEmailEntity penRequest) {
+    final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending rejected PEN email");
-    getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateRejectedRequestGMP().replace("'", "''"), penRequest.getRejectionReason(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateRejectedRequestGMP().replace("'", "''"), penRequest.getRejectionReason(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
     log.debug("Rejected PEN email sent successfully");
   }
 
-  public void sendAdditionalInfoEmail(GMPRequestAdditionalInfoEmailEntity penRequest) {
-    String loginUrl = getLoginUrl(penRequest);
+  public void sendAdditionalInfoEmail(final GMPRequestAdditionalInfoEmailEntity penRequest) {
+    final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending additional info PEN email");
-    getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateAdditionalInfoGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateAdditionalInfoGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
     log.debug("Additional info PEN email sent successfully");
   }
 
-  public void sendStaleReturnedRequestNotificationEmail(GMPRequestAdditionalInfoEmailEntity penRequest) {
-    String loginUrl = getLoginUrl(penRequest);
+  public void sendStaleReturnedRequestNotificationEmail(final GMPRequestAdditionalInfoEmailEntity penRequest) {
+    final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending sendStaleReturnedRequestNotificationEmail info GMP email");
-    getChesEmailService().sendEmail(penRequest, MessageFormat.format(props.getEmailTemplateNotifyStaleReturnGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateNotifyStaleReturnGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
     log.debug("Stale Return Notification GMP email sent successfully");
   }
 
@@ -71,22 +71,22 @@ public class GMPEmailService {
    *
    * @param emailVerificationEntity the payload containing the pen request id and email.
    */
-  public void sendVerifyEmail(GMPRequestEmailVerificationEntity emailVerificationEntity) {
+  public void sendVerifyEmail(final GMPRequestEmailVerificationEntity emailVerificationEntity) {
     log.debug("sending verify email.");
-    final String emailBody = MessageFormat.format(props.getEmailTemplateVerifyEmailGMP().replace("'", "''"),
+    final String emailBody = MessageFormat.format(this.props.getEmailTemplateVerifyEmailGMP().replace("'", "''"),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
         emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken());
-    getChesEmailService().sendEmail(emailVerificationEntity, emailBody, VERIFY_EMAIL_SUBJECT);
+    this.getChesEmailService().sendEmail(emailVerificationEntity, emailBody, VERIFY_EMAIL_SUBJECT);
     log.debug("verification email sent successfully.");
   }
 
 
-  private String getLoginUrl(BaseEmailEntity baseEmailEntity) {
+  private String getLoginUrl(final BaseEmailEntity baseEmailEntity) {
     if (BCSC.toString().equalsIgnoreCase(baseEmailEntity.getIdentityType())) {
-      return props.getLoginBcscGMP();
+      return this.props.getLoginBcscGMP();
     } else if (BASIC.toString().equalsIgnoreCase(baseEmailEntity.getIdentityType())) {
-      return props.getLoginBasicGMP();
+      return this.props.getLoginBasicGMP();
     } else {
       throw new InvalidParameterException("IdentityType provided, could not be resolved. :: " + baseEmailEntity.getIdentityType());
     }

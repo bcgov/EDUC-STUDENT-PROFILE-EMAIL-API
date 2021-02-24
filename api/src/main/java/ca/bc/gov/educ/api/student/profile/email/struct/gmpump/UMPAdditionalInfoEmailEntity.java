@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.model;
+package ca.bc.gov.educ.api.student.profile.email.struct.gmpump;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
