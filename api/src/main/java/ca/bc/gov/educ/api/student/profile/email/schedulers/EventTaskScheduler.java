@@ -72,22 +72,4 @@ public class EventTaskScheduler {
       });
     }
   }
-
-  @Scheduled(fixedRate = 60000)
-  public void test() throws JsonProcessingException {
-    final PenRequestBatchSchoolErrorNotificationEntity entity = new PenRequestBatchSchoolErrorNotificationEntity();
-    entity.setDateTime("23 Feb");
-    entity.setFailReason("blah blah");
-    entity.setFromEmail("omprakashmishra3978@gmail.com");
-    entity.setToEmail("omprkshmishra@gmail.com");
-    entity.setSubmissionNumber("123456789");
-    entity.setSubjectLine("PEN Request could not be processed for File: abcs with Submission Number : 123456789");
-    final Event event = Event.builder()
-        .sagaId(UUID.randomUUID())
-        .eventType(EventType.PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR)
-        .replyTo(PROFILE_REQUEST_EMAIL_API_TOPIC.toString())
-        .eventPayload(JsonUtil.getJsonStringFromObject(entity))
-        .build();
-    this.taskExecutor.execute(() -> this.eventHandlerDelegatorService.handleEvent(event));
-  }
 }
