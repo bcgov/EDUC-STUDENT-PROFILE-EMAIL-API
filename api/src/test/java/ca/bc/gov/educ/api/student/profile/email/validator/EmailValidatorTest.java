@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.student.profile.email.validator;
 
-import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestEmailVerificationEntity;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lombok.val;
@@ -22,10 +22,10 @@ public class EmailValidatorTest {
       "username@test.ca,0",
       "username@yahoo.com,0",
   })
-  public void testValidateEmail_givenDifferentInputs_shouldReturnExpectedResult(String email, int expectedErrorSize) {
-    UMPRequestEmailVerificationEntity entity = new UMPRequestEmailVerificationEntity("123", "BCSC", "", "");
+  public void testValidateEmail_givenDifferentInputs_shouldReturnExpectedResult(final String email, final int expectedErrorSize) {
+    final UMPRequestEmailVerificationEntity entity = new UMPRequestEmailVerificationEntity("123", "BCSC", "", "");
     entity.setEmailAddress(email);
-    val result = validator.validateEmail(entity);
+    val result = this.validator.validateEmail(entity);
     assert (result.size() == expectedErrorSize);
   }
 }

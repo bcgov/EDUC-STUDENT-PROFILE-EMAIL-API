@@ -1,8 +1,8 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
-import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
-import ca.bc.gov.educ.api.student.profile.email.constants.EventType;
-import ca.bc.gov.educ.api.student.profile.email.model.*;
+import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.Event;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
@@ -13,23 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
 @Slf4j
-public class EventHandlerService {
+public class EventHandlerService extends BaseEventHandlerService {
 
-  public static final String EMAIL_SENT_SUCCESS_FOR_SAGA_ID = "email sent success for saga id :: {}";
-  private final Executor asyncExecutor = Executors.newWorkStealingPool(10);
-  public static final String NO_RECORD_SAGA_ID_EVENT_TYPE = "no record found for the saga id and event type combination, processing.";
-  public static final String RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE = "record found for the saga id and event type combination, might be a duplicate or replay," +
-      " just updating the db status so that it will be polled and sent back again.";
-  public static final String EVENT_PAYLOAD = "event is :: {}";
+
   @Getter(PRIVATE)
   private final EmailEventService emailEventService;
 
@@ -40,7 +32,7 @@ public class EventHandlerService {
   private final GMPEmailService gmpEmailService;
 
   @Autowired
-  public EventHandlerService(final UMPEmailService umpEmailService, final EmailEventService emailEventService, GMPEmailService gmpEmailService) {
+  public EventHandlerService(final UMPEmailService umpEmailService, final EmailEventService emailEventService, final GMPEmailService gmpEmailService) {
     this.umpEmailService = umpEmailService;
     this.emailEventService = emailEventService;
     this.gmpEmailService = gmpEmailService;
@@ -48,97 +40,88 @@ public class EventHandlerService {
 
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentProfileRequestComplete(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
-    UMPRequestCompleteEmailEntity umpRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(UMPRequestCompleteEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentProfileRequestComplete(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    final UMPRequestCompleteEmailEntity umpRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(UMPRequestCompleteEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getUmpEmailService().sendCompletedRequestEmail(umpRequestCompleteEmailEntity);
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getUmpEmailService().sendCompletedRequestEmail(umpRequestCompleteEmailEntity);
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, emailEvent.getSagaId());
       }
     });
 
-    return emailAPIEventProcessed(emailEvent);
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentProfileRequestReturn(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    UMPAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(UMPAdditionalInfoEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentProfileRequestReturn(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final UMPAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(UMPAdditionalInfoEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getUmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getUmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
       }
     });
-    return emailAPIEventProcessed(emailEvent);
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentProfileRequestReject(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    UMPRequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(UMPRequestRejectedEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentProfileRequestReject(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final UMPRequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(UMPRequestRejectedEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getUmpEmailService().sendRejectedRequestEmail(rejectedEmail);
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getUmpEmailService().sendRejectedRequestEmail(rejectedEmail);
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
       }
     });
-    return emailAPIEventProcessed(emailEvent);
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentPenRequestComplete(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
-    GMPRequestCompleteEmailEntity penRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestCompleteEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentPenRequestComplete(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    final GMPRequestCompleteEmailEntity penRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestCompleteEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getGmpEmailService().sendCompletedPENRequestEmail(penRequestCompleteEmailEntity, penRequestCompleteEmailEntity.getDemographicsChanged());
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getGmpEmailService().sendCompletedPENRequestEmail(penRequestCompleteEmailEntity, penRequestCompleteEmailEntity.getDemographicsChanged());
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
       }
     });
-    return emailAPIEventProcessed(emailEvent);
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentPenRequestReturn(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    GMPRequestAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestAdditionalInfoEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentPenRequestReturn(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final GMPRequestAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestAdditionalInfoEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getGmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getGmpEmailService().sendAdditionalInfoEmail(additionalInfoEmailEntity);
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
       }
     });
-    return emailAPIEventProcessed(emailEvent);
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleNotifyStudentPenRequestReject(Event event) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
-    GMPRequestRejectedEmailEntity gmpRequestRejectedEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestRejectedEmailEntity.class, event.getEventPayload());
-    asyncExecutor.execute(() -> {
+  public byte[] handleNotifyStudentPenRequestReject(final Event event) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final GMPRequestRejectedEmailEntity gmpRequestRejectedEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestRejectedEmailEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        getGmpEmailService().sendRejectedPENRequestEmail(gmpRequestRejectedEmailEntity);
-        getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        this.getGmpEmailService().sendRejectedPENRequestEmail(gmpRequestRejectedEmailEntity);
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
         log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
       }
     });
-    return emailAPIEventProcessed(emailEvent);
-  }
-
-  private byte[] emailAPIEventProcessed(EmailEventEntity emailEvent) throws JsonProcessingException {
-    Event event = Event.builder()
-        .sagaId(emailEvent.getSagaId())
-        .eventType(EventType.valueOf(emailEvent.getEventType()))
-        .eventOutcome(EventOutcome.valueOf(emailEvent.getEventOutcome()))
-        .eventPayload(emailEvent.getEventPayload()).build();
-    return JsonUtil.getJsonStringFromObject(event).getBytes();
+    return this.emailAPIEventProcessed(emailEvent);
   }
 
 }

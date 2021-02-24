@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.model;
+package ca.bc.gov.educ.api.student.profile.email.struct;
 
 import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.constants.EventType;

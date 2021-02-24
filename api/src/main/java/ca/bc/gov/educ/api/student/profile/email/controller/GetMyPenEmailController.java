@@ -4,14 +4,13 @@ package ca.bc.gov.educ.api.student.profile.email.controller;
 import ca.bc.gov.educ.api.student.profile.email.endpoint.GetMyPenEmailEndpoint;
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.student.profile.email.exception.errors.ApiError;
-import ca.bc.gov.educ.api.student.profile.email.model.*;
 import ca.bc.gov.educ.api.student.profile.email.service.GMPEmailService;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
 import ca.bc.gov.educ.api.student.profile.email.validator.EmailValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
-@EnableResourceServer
 @Slf4j
 public class GetMyPenEmailController implements GetMyPenEmailEndpoint {
 
@@ -33,43 +31,43 @@ public class GetMyPenEmailController implements GetMyPenEmailEndpoint {
   }
 
   @Override
-  public ResponseEntity<Void> sendCompletedPENRequestEmail(GMPRequestCompleteEmailEntity penRequest, boolean demographicsChanged) {
-    validateEmail(penRequest);
-    service.sendCompletedPENRequestEmail(penRequest, demographicsChanged);
+  public ResponseEntity<Void> sendCompletedPENRequestEmail(final GMPRequestCompleteEmailEntity penRequest, final boolean demographicsChanged) {
+    this.validateEmail(penRequest);
+    this.service.sendCompletedPENRequestEmail(penRequest, demographicsChanged);
     return ResponseEntity.noContent().build();
   }
 
   @Override
-  public ResponseEntity<Void> sendRejectedPENRequestEmail(GMPRequestRejectedEmailEntity penRequest) {
-    validateEmail(penRequest);
-    service.sendRejectedPENRequestEmail(penRequest);
+  public ResponseEntity<Void> sendRejectedPENRequestEmail(final GMPRequestRejectedEmailEntity penRequest) {
+    this.validateEmail(penRequest);
+    this.service.sendRejectedPENRequestEmail(penRequest);
     return ResponseEntity.noContent().build();
   }
 
   @Override
-  public ResponseEntity<Void> sendAdditionalInfoRequestEmail(GMPRequestAdditionalInfoEmailEntity penRequest) {
-    validateEmail(penRequest);
-    service.sendAdditionalInfoEmail(penRequest);
+  public ResponseEntity<Void> sendAdditionalInfoRequestEmail(final GMPRequestAdditionalInfoEmailEntity penRequest) {
+    this.validateEmail(penRequest);
+    this.service.sendAdditionalInfoEmail(penRequest);
     return ResponseEntity.noContent().build();
   }
 
   @Override
-  public ResponseEntity<Void> verifyEmail(GMPRequestEmailVerificationEntity gmpRequestEmailVerificationEntity) {
-    validateEmail(gmpRequestEmailVerificationEntity);
-    service.sendVerifyEmail(gmpRequestEmailVerificationEntity);
+  public ResponseEntity<Void> verifyEmail(final GMPRequestEmailVerificationEntity gmpRequestEmailVerificationEntity) {
+    this.validateEmail(gmpRequestEmailVerificationEntity);
+    this.service.sendVerifyEmail(gmpRequestEmailVerificationEntity);
     return ResponseEntity.noContent().build();
   }
 
   @Override
-  public ResponseEntity<Void> notifyStudentForStaleReturnedRequests(GMPRequestAdditionalInfoEmailEntity gmpRequestAdditionalInfoEmailEntity) {
-    service.sendStaleReturnedRequestNotificationEmail(gmpRequestAdditionalInfoEmailEntity);
+  public ResponseEntity<Void> notifyStudentForStaleReturnedRequests(final GMPRequestAdditionalInfoEmailEntity gmpRequestAdditionalInfoEmailEntity) {
+    this.service.sendStaleReturnedRequestNotificationEmail(gmpRequestAdditionalInfoEmailEntity);
     return ResponseEntity.noContent().build();
   }
 
-  private void validateEmail(BaseEmailEntity emailEntity) {
-    val validationResult = emailValidator.validateEmail(emailEntity);
+  private void validateEmail(final BaseEmailEntity emailEntity) {
+    val validationResult = this.emailValidator.validateEmail(emailEntity);
     if (!validationResult.isEmpty()) {
-      ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
+      final ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
       error.addValidationErrors(validationResult);
       throw new InvalidPayloadException(error);
     }

@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.student.profile.email.endpoint;
 
-import ca.bc.gov.educ.api.student.profile.email.model.UMPAdditionalInfoEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestCompleteEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestEmailVerificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.model.UMPRequestRejectedEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestRejectedEmailEntity;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -23,27 +23,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UpdateMyProfileEmailEndpoint {
 
   @PostMapping("/complete")
-  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @PreAuthorize("hasAuthority('SCOPE_SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send complete email", method = "sendCompletedRequestEmail", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendCompletedRequestEmail(@Validated @RequestBody UMPRequestCompleteEmailEntity umpRequestCompleteEmailEntity);
 
   @PostMapping("/reject")
-  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @PreAuthorize("hasAuthority('SCOPE_SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send reject notification email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendRejectedRequestEmail(@Validated @RequestBody UMPRequestRejectedEmailEntity umpRequestRejectedEmailEntity);
 
   @PostMapping("/info")
-  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @PreAuthorize("hasAuthority('SCOPE_SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send additional info request email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> sendAdditionalInfoRequestEmail(@Validated @RequestBody UMPAdditionalInfoEmailEntity umpAdditionalInfoEmailEntity);
 
   @PostMapping("/verify")
-  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @PreAuthorize("hasAuthority('SCOPE_SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "verify student email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> verifyEmail(@Validated @RequestBody UMPRequestEmailVerificationEntity umpRequestEmailVerificationEntity);
 
   @PostMapping("/notify-stale-return")
-  @PreAuthorize("#oauth2.hasScope('SEND_STUDENT_PROFILE_EMAIL')")
+  @PreAuthorize("hasAuthority('SCOPE_SEND_STUDENT_PROFILE_EMAIL')")
   @Operation(description = "send additional info request email", responses = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> notifyStudentForStaleReturnedRequests(@Validated @RequestBody UMPAdditionalInfoEmailEntity umpAdditionalInfoEmailEntity);
 

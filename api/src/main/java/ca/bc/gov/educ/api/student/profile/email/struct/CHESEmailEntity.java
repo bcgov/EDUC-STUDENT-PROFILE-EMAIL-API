@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.model;
+package ca.bc.gov.educ.api.student.profile.email.struct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -21,9 +21,9 @@ public class CHESEmailEntity {
   private String tag;
 
   public List<String> getTo() {
-    if (to == null) {
-      to = new ArrayList<>();
+    if (this.to == null) {
+      this.to = new ArrayList<>();
     }
-    return to;
+    return this.to;
   }
 }

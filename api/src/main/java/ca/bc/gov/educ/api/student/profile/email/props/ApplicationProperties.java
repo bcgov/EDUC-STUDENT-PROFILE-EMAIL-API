@@ -82,4 +82,7 @@ public class ApplicationProperties {
 
   @Value("${nats.connectionName}")
   private String connectionName;
+
+  @Value("${email.template.notify.school.incorrect.format.file}")
+  private String emailTemplateNotifySchoolIncorrectFormatFile;
 }

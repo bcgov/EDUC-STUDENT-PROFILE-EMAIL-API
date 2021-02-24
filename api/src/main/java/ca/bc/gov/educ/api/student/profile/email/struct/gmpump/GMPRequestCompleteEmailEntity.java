@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.model;
+package ca.bc.gov.educ.api.student.profile.email.struct.gmpump;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -9,9 +9,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UMPRequestCompleteEmailEntity extends BaseEmailEntity {
+public class GMPRequestCompleteEmailEntity extends BaseEmailEntity {
 
   @NotNull(message = "First Name can not be null")
   private String firstName;
 
+  private Boolean demographicsChanged;
 }

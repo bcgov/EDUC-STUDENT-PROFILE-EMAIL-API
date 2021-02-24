@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * The type Mock configuration.
@@ -47,11 +46,6 @@ public class MockConfiguration {
     return Mockito.mock(RestUtils.class);
   }
 
-  @Bean
-  @Primary
-  RestTemplate restTemplate() {
-    return Mockito.mock(RestTemplate.class);
-  }
 
   @Bean
   @Primary

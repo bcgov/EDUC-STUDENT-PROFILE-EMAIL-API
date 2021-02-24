@@ -1,18 +1,20 @@
 package ca.bc.gov.educ.api.student.profile.email.messaging;
 
-import ca.bc.gov.educ.api.student.profile.email.model.Event;
 import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerDelegatorService;
+import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_REQUEST_EMAIL_API_TOPIC;
 
@@ -22,11 +24,15 @@ import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_
 public class MessageSubscriber {
 
   private final EventHandlerDelegatorService eventHandlerDelegatorService;
-  private final Executor executor = Executors.newFixedThreadPool(6);
+  private final Executor executor = new EnhancedQueueExecutor.Builder().setThreadFactory(new ThreadFactoryBuilder().setNameFormat("message-subscriber-%d").build())
+      .setCorePoolSize(1)
+      .setMaximumPoolSize(3)
+      .setKeepAliveTime(Duration.ofSeconds(60))
+      .build();
   private final Connection connection;
 
   @Autowired
-  public MessageSubscriber(final Connection con, EventHandlerDelegatorService eventHandlerDelegatorService) {
+  public MessageSubscriber(final Connection con, final EventHandlerDelegatorService eventHandlerDelegatorService) {
     this.eventHandlerDelegatorService = eventHandlerDelegatorService;
     this.connection = con;
   }
@@ -37,8 +43,8 @@ public class MessageSubscriber {
    */
   @PostConstruct
   public void subscribe() {
-    String queue = PROFILE_REQUEST_EMAIL_API_TOPIC.toString().replace("_", "-");
-    var dispatcher = connection.createDispatcher(onMessage());
+    final String queue = PROFILE_REQUEST_EMAIL_API_TOPIC.toString().replace("_", "-");
+    final var dispatcher = this.connection.createDispatcher(this.onMessage());
     dispatcher.subscribe(PROFILE_REQUEST_EMAIL_API_TOPIC.toString(), queue);
   }
 
@@ -51,9 +57,9 @@ public class MessageSubscriber {
     return (Message message) -> {
       if (message != null) {
         try {
-          var eventString = new String(message.getData());
-          var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-          executor.execute(() -> eventHandlerDelegatorService.handleEvent(event));
+          final var eventString = new String(message.getData());
+          final var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
+          this.executor.execute(() -> this.eventHandlerDelegatorService.handleEvent(event));
         } catch (final Exception e) {
           log.error("Exception ", e);
         }
