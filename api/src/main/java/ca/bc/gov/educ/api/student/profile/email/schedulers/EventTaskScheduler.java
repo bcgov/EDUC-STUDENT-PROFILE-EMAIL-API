@@ -1,14 +1,10 @@
 package ca.bc.gov.educ.api.student.profile.email.schedulers;
 
-import ca.bc.gov.educ.api.student.profile.email.constants.EventType;
 import ca.bc.gov.educ.api.student.profile.email.mappers.EmailEventMapper;
 import ca.bc.gov.educ.api.student.profile.email.service.EmailEventService;
 import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.student.profile.email.service.GMPEmailService;
 import ca.bc.gov.educ.api.student.profile.email.service.UMPEmailService;
-import ca.bc.gov.educ.api.student.profile.email.struct.Event;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
@@ -21,10 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 
-import static ca.bc.gov.educ.api.student.profile.email.constants.Topics.PROFILE_REQUEST_EMAIL_API_TOPIC;
 import static lombok.AccessLevel.PRIVATE;
 
 @Component
