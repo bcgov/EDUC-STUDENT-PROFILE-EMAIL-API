@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequest
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
+import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.After;
@@ -146,6 +147,30 @@ public class EventHandlerServiceTest {
     assertThat(record).isPresent();
   }
 
+  @Test
+  public void handleEvent_givenNotifyPenRequestBatchArchiveHasContact_shouldSendArchiveHasContactEmail() throws JsonProcessingException {
+    final var sagaId = UUID.randomUUID();
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_CONTACT)
+            .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
+            .replyTo("local")
+            .sagaId(sagaId)
+            .build());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_CONTACT.toString());
+    assertThat(record).isPresent();
+  }
+
+  @Test
+  public void handleEvent_givenNotifyPenRequestBatchArchiveHasNoSchoolContact_shouldSendArchiveHasNoSchoolContactEmail() throws JsonProcessingException {
+    final var sagaId = UUID.randomUUID();
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT)
+            .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
+            .replyTo("local")
+            .sagaId(sagaId)
+            .build());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT.toString());
+    assertThat(record).isPresent();
+  }
+
   GMPRequestCompleteEmailEntity createCompletedEmailEntity() {
     final var entity = new GMPRequestCompleteEmailEntity();
     entity.setFirstName("FirstName");
@@ -192,6 +217,16 @@ public class EventHandlerServiceTest {
     final var entity = new UMPAdditionalInfoEmailEntity();
     entity.setEmailAddress("test@gmail.com");
     entity.setIdentityType(BCSC.toString());
+    return entity;
+  }
+
+  ArchivePenRequestBatchNotificationEntity createArchivePenRequestBatchNotificationEntity() {
+    final var entity = new ArchivePenRequestBatchNotificationEntity();
+    entity.setSubmissionNumber("000001");
+    entity.setToEmail("test@email.co");
+    entity.setFromEmail("test@email.co");
+    entity.setMincode("123");
+    entity.setSchoolName("Columneetza Secondary");
     return entity;
   }
 }
