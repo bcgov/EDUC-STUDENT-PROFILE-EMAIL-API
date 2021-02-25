@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
+import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,5 +47,23 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
 
     return this.emailAPIEventProcessed(emailEvent);
   }
+
+  public byte[] handleNotifyPenRequestBatchArchiveHasSchoolContact(Event event, boolean hasSchoolContact) throws JsonProcessingException {
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    ArchivePenRequestBatchNotificationEntity archivePenRequestBatchNotificationEntity = JsonUtil.getJsonObjectFromString(ArchivePenRequestBatchNotificationEntity.class, event.getEventPayload());
+    this.asyncExecutor.execute(() -> {
+      if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
+        if(hasSchoolContact) {
+          this.getPrbEmailService().sendArchivePenRequestBatchHasSchoolContactEmail(archivePenRequestBatchNotificationEntity);
+        } else {
+          this.getPrbEmailService().sendArchivePenRequestBatchHasNoSchoolContactEmail(archivePenRequestBatchNotificationEntity);
+        }
+        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+        log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
+      }
+    });
+    return this.emailAPIEventProcessed(emailEvent);
+  }
+
   
 }
