@@ -48,7 +48,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
     return this.emailAPIEventProcessed(emailEvent);
   }
 
-  public byte[] handleNotifyPenRequestBatchArchiveHasSchoolContact(Event event, boolean hasSchoolContact) throws JsonProcessingException {
+  public byte[] handleNotifyPenRequestBatchArchive(Event event, boolean hasSchoolContact) throws JsonProcessingException {
     EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
     ArchivePenRequestBatchNotificationEntity archivePenRequestBatchNotificationEntity = JsonUtil.getJsonObjectFromString(ArchivePenRequestBatchNotificationEntity.class, event.getEventPayload());
     this.asyncExecutor.execute(() -> {

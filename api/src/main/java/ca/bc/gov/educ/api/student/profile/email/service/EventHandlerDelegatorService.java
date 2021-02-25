@@ -87,14 +87,14 @@ public class EventHandlerDelegatorService {
         case NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_CONTACT:
           log.info("received NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_CONTACT event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
-          response = this.getPrbEventHandlerService().handleNotifyPenRequestBatchArchiveHasSchoolContact(event, true);
+          response = this.getPrbEventHandlerService().handleNotifyPenRequestBatchArchive(event, true);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
         case NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT:
           log.info("received NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
-          response = this.getPrbEventHandlerService().handleNotifyPenRequestBatchArchiveHasSchoolContact(event, false);
+          response = this.getPrbEventHandlerService().handleNotifyPenRequestBatchArchive(event, false);
           log.info(RESPONSE_LOG, event.getReplyTo());
           getMessagePublisher().dispatchMessage(event.getReplyTo(), response);
           break;
