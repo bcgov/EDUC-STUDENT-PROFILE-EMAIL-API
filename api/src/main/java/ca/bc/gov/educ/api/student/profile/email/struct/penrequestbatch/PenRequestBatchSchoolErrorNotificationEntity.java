@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PenRequestBatchSchoolErrorNotificationEntity extends BatchNotificationEntity {
-  String subjectLine;
+  String fileName;
   String failReason;
   String dateTime;
 }

@@ -26,7 +26,8 @@ public class PenRequestBatchEmailService {
 
   public void notifySchoolFileFormatIncorrect(final PenRequestBatchSchoolErrorNotificationEntity errorNotificationEntity) {
     final String body = MessageFormat.format(this.props.getEmailTemplateNotifySchoolIncorrectFormatFile().replace("'", "''"), errorNotificationEntity.getSubmissionNumber(), errorNotificationEntity.getDateTime(), errorNotificationEntity.getFailReason(), errorNotificationEntity.getFromEmail());
-    this.getChesEmailService().sendEmail(errorNotificationEntity.getFromEmail(), errorNotificationEntity.getToEmail(), body, errorNotificationEntity.getSubjectLine());
+    final String subject = "PEN Request could not be processed for File: ".concat(errorNotificationEntity.getFileName()).concat(" with Submission Number : ").concat(errorNotificationEntity.getSubmissionNumber());
+    this.getChesEmailService().sendEmail(errorNotificationEntity.getFromEmail(), errorNotificationEntity.getToEmail(), body, subject);
   }
 
   public void sendArchivePenRequestBatchHasSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
