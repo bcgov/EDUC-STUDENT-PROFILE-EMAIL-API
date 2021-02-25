@@ -73,8 +73,7 @@ public class EventHandlerDelegatorService {
           this.publishToNATS(event, message, response);
           break;
         case PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR:
-          log.info("received PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR event :: {}", event.getSagaId());
-          log.trace(PAYLOAD_LOG, event.getEventPayload());
+          log.info("received PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR event :: {}", event);
           response = this.getPrbEventHandlerService().handlePenRequestBatchNotifySchoolFileFormatIncorrect(event);
           this.publishToNATS(event, message, response);
           break;
