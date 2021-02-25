@@ -5,10 +5,10 @@ import ca.bc.gov.educ.api.student.profile.email.service.EmailEventService;
 import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.student.profile.email.service.GMPEmailService;
 import ca.bc.gov.educ.api.student.profile.email.service.UMPEmailService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.jboss.threads.EnhancedQueueExecutor;
@@ -49,7 +49,7 @@ public class EventTaskScheduler {
 
   @Scheduled(cron = "0 0/1 * * * *")
   @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "50s", lockAtMostFor = "58s")
-  public void checkAndSendEmails() throws JsonProcessingException {
+  public void checkAndSendEmails() {
     LockAssert.assertLocked();
     final LocalDateTime dateTimeToCompare = LocalDateTime.now().minusMinutes(5);
     final var unsentEmailEvents = this.getEmailEventService().getPendingEmailEvents(dateTimeToCompare);
@@ -58,7 +58,9 @@ public class EventTaskScheduler {
       this.taskExecutor.execute(() -> {
         for (final var emailEvent : unsentEmailEvents) {
           try {
-            this.eventHandlerDelegatorService.handleEvent(EmailEventMapper.mapper.toEvent(emailEvent));
+            val event = EmailEventMapper.mapper.toEvent(emailEvent);
+            event.setReplyTo(null); // in replay scenario, responding back is not needed.
+            this.eventHandlerDelegatorService.handleEvent(event, null); // message is null as it is not being executed from subscriber.
           } catch (final Exception ex) {
             log.error("exception occurred... ", ex);
           }

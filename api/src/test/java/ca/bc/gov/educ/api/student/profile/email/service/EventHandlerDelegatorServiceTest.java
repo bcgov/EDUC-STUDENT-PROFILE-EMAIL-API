@@ -27,7 +27,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
-public class EventHandlerServiceTest {
+public class EventHandlerDelegatorServiceTest {
 
   @Autowired
   EventHandlerDelegatorService eventHandlerService;
@@ -59,7 +59,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createCompletedEmailEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_COMPLETE.toString());
     assertThat(record).isPresent();
   }
@@ -72,7 +72,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createUMPEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE.toString());
     assertThat(record).isPresent();
 
@@ -85,7 +85,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_REJECT.toString());
     assertThat(record).isPresent();
 
@@ -98,7 +98,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedUMPEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT.toString());
     assertThat(record).isPresent();
 
@@ -111,7 +111,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_RETURN.toString());
     assertThat(record).isPresent();
 
@@ -124,7 +124,7 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoUMPEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN.toString());
     assertThat(record).isPresent();
 
@@ -137,12 +137,12 @@ public class EventHandlerServiceTest {
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoUMPEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoUMPEntity()))
         .replyTo("local")
         .sagaId(sagaId)
-        .build());
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN.toString());
     assertThat(record).isPresent();
   }
@@ -151,10 +151,10 @@ public class EventHandlerServiceTest {
   public void handleEvent_givenNotifyPenRequestBatchArchiveHasContact_shouldSendArchiveHasContactEmail() throws JsonProcessingException {
     final var sagaId = UUID.randomUUID();
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_CONTACT)
-            .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
-            .replyTo("local")
-            .sagaId(sagaId)
-            .build());
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_CONTACT.toString());
     assertThat(record).isPresent();
   }
@@ -163,10 +163,10 @@ public class EventHandlerServiceTest {
   public void handleEvent_givenNotifyPenRequestBatchArchiveHasNoSchoolContact_shouldSendArchiveHasNoSchoolContactEmail() throws JsonProcessingException {
     final var sagaId = UUID.randomUUID();
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT)
-            .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
-            .replyTo("local")
-            .sagaId(sagaId)
-            .build());
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT.toString());
     assertThat(record).isPresent();
   }

@@ -59,7 +59,7 @@ public class MessageSubscriber {
         try {
           final var eventString = new String(message.getData());
           final var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-          this.executor.execute(() -> this.eventHandlerDelegatorService.handleEvent(event));
+          this.executor.execute(() -> this.eventHandlerDelegatorService.handleEvent(event, message));
         } catch (final Exception e) {
           log.error("Exception ", e);
         }
