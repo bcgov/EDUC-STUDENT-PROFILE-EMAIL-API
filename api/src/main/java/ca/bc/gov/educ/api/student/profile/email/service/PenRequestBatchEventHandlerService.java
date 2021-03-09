@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
+import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
@@ -35,7 +36,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handlePenRequestBatchNotifySchoolFileFormatIncorrect(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED); // make sure the db operation is successful before sending the email.
     final PenRequestBatchSchoolErrorNotificationEntity errorNotificationEntity = JsonUtil.getJsonObjectFromString(PenRequestBatchSchoolErrorNotificationEntity.class, event.getEventPayload());
     this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
@@ -49,7 +50,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
   }
 
   public byte[] handleNotifyPenRequestBatchArchive(Event event, boolean hasSchoolContact) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.ARCHIVE_EMAIL_SENT);// make sure the db operation is successful before sending the email.
     ArchivePenRequestBatchNotificationEntity archivePenRequestBatchNotificationEntity = JsonUtil.getJsonObjectFromString(ArchivePenRequestBatchNotificationEntity.class, event.getEventPayload());
     this.asyncExecutor.execute(() -> {
       if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
