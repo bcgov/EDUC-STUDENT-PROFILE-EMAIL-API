@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
+import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.*;
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
@@ -36,35 +35,47 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handlePenRequestBatchNotifySchoolFileFormatIncorrect(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED); // make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.NOTIFIED); // make sure the db operation is successful before sending the email.
     final PenRequestBatchSchoolErrorNotificationEntity errorNotificationEntity = JsonUtil.getJsonObjectFromString(PenRequestBatchSchoolErrorNotificationEntity.class, event.getEventPayload());
-    this.asyncExecutor.execute(() -> {
-      if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        this.getPrbEmailService().notifySchoolFileFormatIncorrect(errorNotificationEntity);
-        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
-        log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, emailEvent.getSagaId());
-      }
-    });
-
-    return this.emailAPIEventProcessed(emailEvent);
-  }
-
-  public byte[] handleNotifyPenRequestBatchArchive(Event event, boolean hasSchoolContact) throws JsonProcessingException {
-    EmailEventEntity emailEvent = getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.ARCHIVE_EMAIL_SENT);// make sure the db operation is successful before sending the email.
-    ArchivePenRequestBatchNotificationEntity archivePenRequestBatchNotificationEntity = JsonUtil.getJsonObjectFromString(ArchivePenRequestBatchNotificationEntity.class, event.getEventPayload());
-    this.asyncExecutor.execute(() -> {
-      if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
-        if(hasSchoolContact) {
-          this.getPrbEmailService().sendArchivePenRequestBatchHasSchoolContactEmail(archivePenRequestBatchNotificationEntity);
-        } else {
-          this.getPrbEmailService().sendArchivePenRequestBatchHasNoSchoolContactEmail(archivePenRequestBatchNotificationEntity);
+    if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
+      this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
+      this.asyncExecutor.execute(() -> {
+        try {
+          this.getPrbEmailService().notifySchoolFileFormatIncorrect(errorNotificationEntity);
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+          log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, emailEvent.getSagaId());
+        } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn("Exception for :: {}", event, exception);
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
-        this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
-        log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
-      }
-    });
+      });
+    }
+
     return this.emailAPIEventProcessed(emailEvent);
   }
 
-  
+  public byte[] handleNotifyPenRequestBatchArchive(final Event event, final boolean hasSchoolContact) throws JsonProcessingException {
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.ARCHIVE_EMAIL_SENT);// make sure the db operation is successful before sending the email.
+    final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchNotificationEntity = JsonUtil.getJsonObjectFromString(ArchivePenRequestBatchNotificationEntity.class, event.getEventPayload());
+    if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
+      this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
+      this.asyncExecutor.execute(() -> {
+        try {
+          if (hasSchoolContact) {
+            this.getPrbEmailService().sendArchivePenRequestBatchHasSchoolContactEmail(archivePenRequestBatchNotificationEntity);
+          } else {
+            this.getPrbEmailService().sendArchivePenRequestBatchHasNoSchoolContactEmail(archivePenRequestBatchNotificationEntity);
+          }
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+          log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
+        } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn("Exception for :: {}", event, exception);
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
+        }
+      });
+    }
+    return this.emailAPIEventProcessed(emailEvent);
+  }
+
+
 }

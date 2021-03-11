@@ -82,4 +82,7 @@ public class ApplicationProperties {
 
   @Value("${nats.connectionName}")
   private String connectionName;
+
+  @Value("${notification.email.switch.on}")
+  private Boolean isEmailNotificationSwitchedOn;
 }

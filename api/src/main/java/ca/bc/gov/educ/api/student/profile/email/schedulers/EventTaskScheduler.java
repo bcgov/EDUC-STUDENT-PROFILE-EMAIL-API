@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
 
+import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
 import static lombok.AccessLevel.PRIVATE;
 
 @Component
@@ -47,8 +48,8 @@ public class EventTaskScheduler {
     this.eventHandlerDelegatorService = eventHandlerDelegatorService;
   }
 
-  @Scheduled(cron = "0 0/1 * * * *")
-  @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "50s", lockAtMostFor = "58s")
+  @Scheduled(cron = "0 0/5 * * * *")// run every 5 minutes
+  @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "3m", lockAtMostFor = "4m")
   public void checkAndSendEmails() {
     LockAssert.assertLocked();
     final LocalDateTime dateTimeToCompare = LocalDateTime.now().minusMinutes(5);
@@ -66,6 +67,18 @@ public class EventTaskScheduler {
           }
         }
       });
+    }
+  }
+
+  @Scheduled(cron = "0 0 0/6 * * *")// run every 6 hours
+  @SchedulerLock(name = "EMAIL_STUCK_AT_PROCESSING", lockAtLeastFor = "3m", lockAtMostFor = "4m")
+  public void checkEventsStuckAtProcessingAndMarkThemPending() {
+    LockAssert.assertLocked();
+    final LocalDateTime dateTimeToCompare = LocalDateTime.now().minusHours(6);
+    final var eventsStuckAtProcessing = this.getEmailEventService().getEventsStuckAtProcessing(dateTimeToCompare);
+    if (!eventsStuckAtProcessing.isEmpty()) {
+      log.info("found :: {} events, which are stuck at processing...", eventsStuckAtProcessing.size());
+      eventsStuckAtProcessing.forEach(event -> this.getEmailEventService().updateEventStatus(event.getEventId(), PENDING_EMAIL_ACK.getCode()));
     }
   }
 }

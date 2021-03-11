@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequest
 import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestRejectedEmailEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventType.NOTIFY_STUDENT_PEN_REQUEST_REJECT;
@@ -34,6 +36,19 @@ public class EmailEventServiceTest {
   public void testGetPendingEmailEvents_givenNoData_shouldReturnEmptyList() {
     final var data = this.emailEventService.getPendingEmailEvents(LocalDateTime.now().minusMinutes(5));
     assertThat(data).isEmpty();
+  }
+
+  @Test
+  public void testUpdateEventStatus_givenNoData_shouldNotDoAnything() {
+    final UUID eventID = UUID.randomUUID();
+    this.emailEventService.updateEventStatus(eventID, PENDING_EMAIL_ACK.getCode());
+    assertThat(this.repository.findAll()).isEmpty();
+  }
+
+  @Test
+  public void testGetEventsStuckAtProcessing_givenNoData_shouldReturnEmptyList() {
+    val result = this.emailEventService.getEventsStuckAtProcessing(LocalDateTime.now().minusHours(6));
+    assertThat(result).isEmpty();
   }
 
   @Test
