@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
+import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
@@ -40,7 +41,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentProfileRequestComplete(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED); // make sure the db operation is successful before sending the email.
     final UMPRequestCompleteEmailEntity umpRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(UMPRequestCompleteEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
@@ -59,7 +60,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentProfileRequestReturn(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED);// make sure the db operation is successful before sending the email.
     final UMPAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(UMPAdditionalInfoEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
@@ -78,7 +79,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentProfileRequestReject(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED);// make sure the db operation is successful before sending the email.
     final UMPRequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(UMPRequestRejectedEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
@@ -98,7 +99,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentPenRequestComplete(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event); // make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED); // make sure the db operation is successful before sending the email.
     final GMPRequestCompleteEmailEntity penRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestCompleteEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
@@ -118,7 +119,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentPenRequestReturn(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED);// make sure the db operation is successful before sending the email.
     final GMPRequestAdditionalInfoEmailEntity additionalInfoEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestAdditionalInfoEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
@@ -137,7 +138,7 @@ public class EventHandlerService extends BaseEventHandlerService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyStudentPenRequestReject(final Event event) throws JsonProcessingException {
-    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event);// make sure the db operation is successful before sending the email.
+    final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.STUDENT_NOTIFIED);// make sure the db operation is successful before sending the email.
     final GMPRequestRejectedEmailEntity gmpRequestRejectedEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestRejectedEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
