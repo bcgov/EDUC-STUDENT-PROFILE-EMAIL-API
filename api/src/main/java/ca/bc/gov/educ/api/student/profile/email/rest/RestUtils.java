@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
@@ -35,20 +34,28 @@ public class RestUtils {
    * @param chesEmail the ches email json object as string
    */
   public void sendEmail(final CHESEmailEntity chesEmail) {
-    this.chesWebClient
-        .post()
-        .uri(this.props.getChesEndpointURL())
-        .header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .body(Mono.just(chesEmail), CHESEmailEntity.class)
-        .retrieve().bodyToMono(String.class).subscribeOn(Schedulers.parallel()).doOnError(this::logError).doOnSuccess(this::onSendEmailSuccess).block();
+    if (this.props.getIsEmailNotificationSwitchedOn() != null && this.props.getIsEmailNotificationSwitchedOn()) {
+      this.chesWebClient
+          .post()
+          .uri(this.props.getChesEndpointURL())
+          .header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+          .body(Mono.just(chesEmail), CHESEmailEntity.class)
+          .retrieve()
+          .bodyToMono(String.class)
+          .doOnError(error -> this.logError(error, chesEmail))
+          .doOnSuccess(success -> this.onSendEmailSuccess(success, chesEmail))
+          .block();
+    } else {
+      log.info("email outbound to CHES is switched off");
+    }
   }
 
-  private void logError(final Throwable throwable) {
-    log.error("Error from CHES API call", throwable);
+  private void logError(final Throwable throwable, final CHESEmailEntity chesEmailEntity) {
+    log.error("Error from CHES API call :: {} ", chesEmailEntity, throwable);
   }
 
-  private void onSendEmailSuccess(final String s) {
-    log.info("Email sent success :: {}", s);
+  private void onSendEmailSuccess(final String s, final CHESEmailEntity chesEmailEntity) {
+    log.info("Email sent success :: {} :: {}", chesEmailEntity, s);
   }
 
   public CHESEmailEntity getChesEmail(final String emailAddress, final String body, final String subject) {

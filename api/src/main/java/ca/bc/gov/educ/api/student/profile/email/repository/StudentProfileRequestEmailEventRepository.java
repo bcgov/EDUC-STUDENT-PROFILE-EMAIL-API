@@ -15,5 +15,6 @@ public interface StudentProfileRequestEmailEventRepository extends CrudRepositor
 
   List<EmailEventEntity> findByEventStatus(String toString);
 
-  List<EmailEventEntity> findByEventStatusAndCreateDateBefore(String eventStatus, LocalDateTime createDateToCompare);
+  List<EmailEventEntity> findTop100ByEventStatusAndCreateDateBefore(String eventStatus, LocalDateTime createDateToCompare);
+
 }

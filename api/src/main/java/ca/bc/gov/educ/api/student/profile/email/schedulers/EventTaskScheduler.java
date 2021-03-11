@@ -47,8 +47,8 @@ public class EventTaskScheduler {
     this.eventHandlerDelegatorService = eventHandlerDelegatorService;
   }
 
-  @Scheduled(cron = "0 0/1 * * * *")
-  @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "50s", lockAtMostFor = "58s")
+  @Scheduled(cron = "0 0/5 * * * *")// run every 5 minutes
+  @SchedulerLock(name = "PENDING_EMAIL_LOCK", lockAtLeastFor = "3m", lockAtMostFor = "4m")
   public void checkAndSendEmails() {
     LockAssert.assertLocked();
     final LocalDateTime dateTimeToCompare = LocalDateTime.now().minusMinutes(5);
