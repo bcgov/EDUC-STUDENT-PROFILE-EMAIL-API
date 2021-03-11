@@ -75,6 +75,21 @@ public class EventHandlerDelegatorServiceTest {
   }
 
   @Test
+  public void handleEvent_givenNotifyStudentPenRequestCompleteChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_COMPLETE)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createCompletedEmailEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_COMPLETE.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
+  }
+
+  @Test
   public void handleEvent_givenNotifyStudentProfileRequestComplete_shouldSendCompleteEmail() throws JsonProcessingException {
     final var sagaId = UUID.randomUUID();
 
@@ -85,6 +100,22 @@ public class EventHandlerDelegatorServiceTest {
         .build(), null);
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE.toString());
     assertThat(record).isPresent();
+
+  }
+
+  @Test
+  public void handleEvent_givenNotifyStudentProfileRequestCompleteAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createUMPEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
 
   }
 
@@ -102,6 +133,21 @@ public class EventHandlerDelegatorServiceTest {
   }
 
   @Test
+  public void handleEvent_givenNotifyStudentPenRequestRejectAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_REJECT)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_REJECT.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
+  }
+
+  @Test
   public void handleEvent_givenNotifyStudentProfileRequestReject_shouldSendRejectEmail() throws JsonProcessingException {
     final var sagaId = UUID.randomUUID();
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT)
@@ -112,6 +158,21 @@ public class EventHandlerDelegatorServiceTest {
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT.toString());
     assertThat(record).isPresent();
 
+  }
+
+  @Test
+  public void handleEvent_givenNotifyStudentProfileRequestRejectGivenChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedUMPEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
   }
 
   @Test
@@ -128,6 +189,21 @@ public class EventHandlerDelegatorServiceTest {
   }
 
   @Test
+  public void handleEvent_givenNotifyStudentPenRequestReturnAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_RETURN)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PEN_REQUEST_RETURN.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
+  }
+
+  @Test
   public void handleEvent_givenNotifyStudentProfileRequestReturn_shouldSendReturnEmail() throws JsonProcessingException {
     final var sagaId = UUID.randomUUID();
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN)
@@ -138,6 +214,21 @@ public class EventHandlerDelegatorServiceTest {
     final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN.toString());
     assertThat(record).isPresent();
 
+  }
+
+  @Test
+  public void handleEvent_givenNotifyStudentProfileRequestReturnAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN)
+        .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoUMPEntity()))
+        .replyTo("local")
+        .sagaId(sagaId)
+        .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
   }
 
   @Test
