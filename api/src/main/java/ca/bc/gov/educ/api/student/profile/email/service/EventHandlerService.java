@@ -83,7 +83,6 @@ public class EventHandlerService extends BaseEventHandlerService {
     final UMPRequestRejectedEmailEntity rejectedEmail = JsonUtil.getJsonObjectFromString(UMPRequestRejectedEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
-
       this.asyncExecutor.execute(() -> {
         try {
           this.getUmpEmailService().sendRejectedRequestEmail(rejectedEmail);
@@ -103,7 +102,6 @@ public class EventHandlerService extends BaseEventHandlerService {
     final GMPRequestCompleteEmailEntity penRequestCompleteEmailEntity = JsonUtil.getJsonObjectFromString(GMPRequestCompleteEmailEntity.class, event.getEventPayload());
     if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
       this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
-
       this.asyncExecutor.execute(() -> {
         try {
           this.getGmpEmailService().sendCompletedPENRequestEmail(penRequestCompleteEmailEntity, penRequestCompleteEmailEntity.getDemographicsChanged());

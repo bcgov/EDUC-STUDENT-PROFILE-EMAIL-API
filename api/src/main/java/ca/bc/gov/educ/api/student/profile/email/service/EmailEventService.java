@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PENDING_EMAIL_ACK;
-import static ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService.*;
+import static ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService.EVENT_PAYLOAD;
+import static ca.bc.gov.educ.api.student.profile.email.service.EventHandlerService.NO_RECORD_SAGA_ID_EVENT_TYPE;
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
@@ -38,7 +38,7 @@ public class EmailEventService {
    * must use new transaction, so that data is committed, user must not be notified if db transaction fails.
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public EmailEventEntity createOrUpdateEventInDB(final Event event, EventOutcome eventOutcome) {
+  public EmailEventEntity createOrUpdateEventInDB(final Event event, final EventOutcome eventOutcome) {
     final var emailEventEntityOptional = this.getEmailEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     final EmailEventEntity emailEventEntity;
     if (emailEventEntityOptional.isEmpty()) {
@@ -46,12 +46,6 @@ public class EmailEventService {
       log.trace(EVENT_PAYLOAD, event);
       event.setEventOutcome(eventOutcome);
       emailEventEntity = this.createEmailEvent(event);
-      return this.getEmailEventRepository().save(emailEventEntity);
-    } else if (!PENDING_EMAIL_ACK.toString().equalsIgnoreCase(emailEventEntityOptional.get().getEventStatus())) {
-      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
-      log.trace(EVENT_PAYLOAD, event);
-      emailEventEntity = emailEventEntityOptional.get();
-      emailEventEntity.setEventStatus(MESSAGE_PUBLISHED.toString());
       return this.getEmailEventRepository().save(emailEventEntity);
     }
     return emailEventEntityOptional.get();
@@ -85,6 +79,6 @@ public class EmailEventService {
   }
 
   public List<EmailEventEntity> getPendingEmailEvents(final LocalDateTime dateTimeToCompare) {
-    return this.emailEventRepository.findByEventStatusAndCreateDateBefore(PENDING_EMAIL_ACK.getCode(), dateTimeToCompare);
+    return this.emailEventRepository.findTop100ByEventStatusAndCreateDateBefore(PENDING_EMAIL_ACK.getCode(), dateTimeToCompare);
   }
 }
