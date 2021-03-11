@@ -22,6 +22,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class EventHandlerService extends BaseEventHandlerService {
 
 
+  public static final String EXCEPTION_FOR = "Exception for :: {}";
   @Getter(PRIVATE)
   private final EmailEventService emailEventService;
 
@@ -51,6 +52,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, emailEvent.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -70,6 +72,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -89,6 +92,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -108,6 +112,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -127,6 +132,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -146,6 +152,7 @@ public class EventHandlerService extends BaseEventHandlerService {
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });

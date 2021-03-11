@@ -45,6 +45,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, emailEvent.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn("Exception for :: {}", event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });
@@ -68,6 +69,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn("Exception for :: {}", event, exception);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
         }
       });

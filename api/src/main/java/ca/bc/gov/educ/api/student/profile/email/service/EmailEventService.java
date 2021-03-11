@@ -51,7 +51,7 @@ public class EmailEventService {
     return emailEventEntityOptional.get();
   }
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   // Retry logic, if server encounters any issue such as communication failure etc..
   @Retryable(value = {Exception.class}, maxAttempts = 10, backoff = @Backoff(multiplier = 2, delay = 2000))
   public void updateEventStatus(final UUID eventId, final String eventStatus) {
