@@ -49,7 +49,7 @@ public class RestWebClient {
 
   @Bean
   @Autowired
-  WebClient webClient(final WebClient.Builder builder) {
+  WebClient chesWebClient(final WebClient.Builder builder) {
     val clientRegistryRepo = new InMemoryReactiveClientRegistrationRepository(ClientRegistration
       .withRegistrationId(this.props.getChesClientID())
       .tokenUri(this.props.getChesTokenURL())
