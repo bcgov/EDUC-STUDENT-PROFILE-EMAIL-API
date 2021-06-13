@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.student.profile.email.messaging;
 
+import ca.bc.gov.educ.api.student.profile.email.helpers.LogHelper;
 import ca.bc.gov.educ.api.student.profile.email.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
@@ -58,6 +59,7 @@ public class MessageSubscriber {
       if (message != null) {
         try {
           final var eventString = new String(message.getData());
+          LogHelper.logMessagingEventDetails(eventString);
           final var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
           this.executor.execute(() -> this.eventHandlerDelegatorService.handleEvent(event, message));
         } catch (final Exception e) {

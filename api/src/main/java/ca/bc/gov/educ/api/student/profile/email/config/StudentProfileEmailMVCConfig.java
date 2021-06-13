@@ -9,15 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class StudentProfileEmailMVCConfig implements WebMvcConfigurer {
 
-    private final StudentProfileEmailRequestInterceptor studentProfileEmailRequestInterceptor;
+  private final RequestResponseInterceptor requestResponseInterceptor;
 
-    @Autowired
-    public StudentProfileEmailMVCConfig(final StudentProfileEmailRequestInterceptor studentProfileEmailRequestInterceptor){
-        this.studentProfileEmailRequestInterceptor = studentProfileEmailRequestInterceptor;
-    }
+  @Autowired
+  public StudentProfileEmailMVCConfig(final RequestResponseInterceptor requestResponseInterceptor) {
+    this.requestResponseInterceptor = requestResponseInterceptor;
+  }
 
   @Override
   public void addInterceptors(final InterceptorRegistry registry) {
-    registry.addInterceptor(this.studentProfileEmailRequestInterceptor).addPathPatterns("/**");
+    registry.addInterceptor(this.requestResponseInterceptor).addPathPatterns("/**");
   }
 }

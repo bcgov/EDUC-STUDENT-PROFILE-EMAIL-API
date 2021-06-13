@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class ApplicationProperties {
-
+  public static final String CORRELATION_ID = "correlationID";
   //common props
   @Value("${ches.client.id}")
   private String chesClientID;
