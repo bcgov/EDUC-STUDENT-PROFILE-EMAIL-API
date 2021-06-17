@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ToString(callSuper = true)
 public class UMPRequestEmailVerificationEntity extends BaseEmailEntity {
   @NotNull(message = "studentRequestId can not be null.")
   private String studentRequestId;
@@ -19,5 +20,6 @@ public class UMPRequestEmailVerificationEntity extends BaseEmailEntity {
   @NotNull(message = "verificationUrl can not be null.")
   private String verificationUrl; // this holds the url link.
   @NotNull(message = "jwt Token can not be null.")
+  @ToString.Exclude
   private String jwtToken;
 }

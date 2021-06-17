@@ -1,13 +1,11 @@
 package ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArchivePenRequestBatchNotificationEntity extends BatchNotificationEntity {
