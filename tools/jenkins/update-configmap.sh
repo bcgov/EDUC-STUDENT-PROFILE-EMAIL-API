@@ -9,7 +9,6 @@ SOAM_KC=soam-$envValue.apps.silver.devops.gov.bc.ca
 NATS_CLUSTER=educ_nats_cluster
 NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 
-oc project $COMMON_NAMESPACE-$envValue
 SOAM_KC_LOAD_USER_ADMIN=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
 SOAM_KC_LOAD_USER_PASS=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
 URL_LOGIN_BASIC_GMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_gmp"
@@ -17,7 +16,6 @@ URL_LOGIN_BASIC_UMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen
 URL_LOGIN_BCSC_GMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_gmp"
 URL_LOGIN_BCSC_UMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bcsc_ump"
 
-oc project $PEN_NAMESPACE-$envValue
 CHES_CLIENT_ID=$(oc -n $PEN_NAMESPACE-$envValue -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_CLIENT_ID\": \"\(.*\)\",/\1/p")
 CHES_CLIENT_SECRET=$(oc -n $PEN_NAMESPACE-$envValue -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_CLIENT_SECRET\": \"\(.*\)\",/\1/p")
 CHES_TOKEN_URL=$(oc -n $PEN_NAMESPACE-$envValue -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"CHES_TOKEN_URL\": \"\(.*\)\",/\1/p")
