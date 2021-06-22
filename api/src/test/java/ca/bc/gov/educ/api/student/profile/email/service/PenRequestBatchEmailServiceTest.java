@@ -65,7 +65,7 @@ public class PenRequestBatchEmailServiceTest {
     }
 
     String getArchivePenRequestBatchHasSchoolContactSubject() {
-        return "has school subject Columneetza Secondary";
+        return "has school subject 123 Columneetza Secondary";
     }
 
     String getArchivePenRequestBatchHasNoSchoolContactBody() {
