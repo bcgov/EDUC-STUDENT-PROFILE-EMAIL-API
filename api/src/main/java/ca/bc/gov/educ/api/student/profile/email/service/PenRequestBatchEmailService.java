@@ -33,7 +33,7 @@ public class PenRequestBatchEmailService {
   public void sendArchivePenRequestBatchHasSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
     final String body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
-    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSchoolName());
+    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
     this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), body, subject);
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
