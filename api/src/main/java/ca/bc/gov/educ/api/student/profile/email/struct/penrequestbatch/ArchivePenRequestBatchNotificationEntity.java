@@ -10,14 +10,16 @@ import lombok.*;
 @NoArgsConstructor
 public class ArchivePenRequestBatchNotificationEntity extends BatchNotificationEntity {
 
-    /**
-     * The archived pen request batch's school name
-     */
-    private String schoolName;
+  /**
+   * The archived pen request batch's school name
+   */
+  private String schoolName;
 
-    /**
-     * The archived pen request batch's mincode
-     */
-    private String mincode;
+  /**
+   * The archived pen request batch's mincode
+   */
+  private String mincode;
+
+  private PendingRecords pendingRecords;
 }
 
