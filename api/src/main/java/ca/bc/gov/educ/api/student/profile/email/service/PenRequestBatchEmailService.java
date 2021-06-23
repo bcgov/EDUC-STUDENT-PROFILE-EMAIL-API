@@ -32,10 +32,29 @@ public class PenRequestBatchEmailService {
 
   public void sendArchivePenRequestBatchHasSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
-    final String body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
     final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
-    this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), body, subject);
+    this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), this.getEmailBody(archivePenRequestBatchEmailEntity), subject);
     log.debug("Completed archive pen request batch has school contact email successfully");
+  }
+
+  private String getEmailBody(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
+    final String body;
+    if (archivePenRequestBatchEmailEntity.getPendingRecords() != null) {
+      switch (archivePenRequestBatchEmailEntity.getPendingRecords()) {
+        case ALL:
+          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplateAllPending().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          break;
+        case SOME:
+          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplateSomePending().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          break;
+        default:
+          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          break;
+      }
+    } else {
+      body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+    }
+    return body;
   }
 
   public void sendArchivePenRequestBatchHasNoSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
