@@ -99,7 +99,7 @@ public class PenRequestBatchEmailServiceTest {
   }
 
   String getArchivePenRequestBatchHasSchoolContactSubject() {
-    return "has school subject 123 Columneetza Secondary";
+    return "has school subject 000001 123 Columneetza Secondary";
   }
 
   String emailBodyPendingSome() {
@@ -111,6 +111,6 @@ public class PenRequestBatchEmailServiceTest {
   }
 
   String getArchivePenRequestBatchHasNoSchoolContactSubject() {
-    return "has no school subject 123";
+    return "has no school subject 000001 123";
   }
 }
