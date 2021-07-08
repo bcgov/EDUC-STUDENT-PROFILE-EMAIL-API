@@ -32,7 +32,7 @@ public class PenRequestBatchEmailService {
 
   public void sendArchivePenRequestBatchHasSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
-    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
+    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
     this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), this.getEmailBody(archivePenRequestBatchEmailEntity), subject);
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
@@ -60,7 +60,7 @@ public class PenRequestBatchEmailService {
   public void sendArchivePenRequestBatchHasNoSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
     final String body = MessageFormat.format(this.props.getArchivedPenRequestBatchNoSchoolContactEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
-    final String subject = MessageFormat.format(this.props.getArchivePrbHasNoSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getMincode());
+    final String subject = MessageFormat.format(this.props.getArchivePrbHasNoSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode());
     this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), body, subject);
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
