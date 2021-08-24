@@ -25,11 +25,17 @@ public class EventHandlerDelegatorService {
   @Getter(PRIVATE)
   private final PenRequestBatchEventHandlerService prbEventHandlerService;
 
+  @Getter(PRIVATE)
+  private final MacroEventHandlerService macroEventHandlerService;
+
   @Autowired
-  public EventHandlerDelegatorService(final MessagePublisher messagePublisher, final EventHandlerService eventHandlerService, final PenRequestBatchEventHandlerService prbEventHandlerService) {
+  public EventHandlerDelegatorService(final MessagePublisher messagePublisher, final EventHandlerService eventHandlerService,
+                                      final PenRequestBatchEventHandlerService prbEventHandlerService,
+                                      final MacroEventHandlerService macroEventHandlerService) {
     this.messagePublisher = messagePublisher;
     this.eventHandlerService = eventHandlerService;
     this.prbEventHandlerService = prbEventHandlerService;
+    this.macroEventHandlerService = macroEventHandlerService;
   }
 
   public void handleEvent(final Event event, final Message message) {
@@ -87,6 +93,16 @@ public class EventHandlerDelegatorService {
           log.info("received NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG, event.getEventPayload());
           response = this.getPrbEventHandlerService().handleNotifyPenRequestBatchArchive(event, false);
+          this.publishToNATS(event, message, response);
+          break;
+        case NOTIFY_MACRO_CREATE:
+          log.info("received NOTIFY_MACRO_CREATE event :: {}", event);
+          response = this.getMacroEventHandlerService().handleNotifyMacroCreate(event);
+          this.publishToNATS(event, message, response);
+          break;
+        case NOTIFY_MACRO_UPDATE:
+          log.info("received NOTIFY_MACRO_UPDATE event :: {}", event);
+          response = this.getMacroEventHandlerService().handleNotifyMacroUpdate(event);
           this.publishToNATS(event, message, response);
           break;
         default:

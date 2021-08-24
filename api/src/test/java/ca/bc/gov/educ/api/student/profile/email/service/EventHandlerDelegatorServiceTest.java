@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequest
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
+import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
@@ -317,6 +318,60 @@ public class EventHandlerDelegatorServiceTest {
     assertThat(record.get().getEventStatus()).isEqualTo(MESSAGE_PUBLISHED.getCode());
   }
 
+  @Test
+  public void handleEvent_givenNotifyMacroCreate_shouldSendMacroCreateEmail() throws JsonProcessingException {
+    final var sagaId = UUID.randomUUID();
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_CREATE)
+      .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
+      .replyTo("local")
+      .sagaId(sagaId)
+      .build(), null);
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_MACRO_CREATE.toString());
+    assertThat(record).isPresent();
+  }
+
+  @Test
+  public void handleEvent_givenNotifyMacroCreate_shouldSendMacroCreateEmailAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_CREATE)
+      .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
+      .replyTo("local")
+      .sagaId(sagaId)
+      .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_MACRO_CREATE.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
+  }
+
+  @Test
+  public void handleEvent_givenNotifyMacroUpdate_shouldSendMacroCreateEmail() throws JsonProcessingException {
+    final var sagaId = UUID.randomUUID();
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_UPDATE)
+      .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
+      .replyTo("local")
+      .sagaId(sagaId)
+      .build(), null);
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_MACRO_UPDATE.toString());
+    assertThat(record).isPresent();
+  }
+
+  @Test
+  public void handleEvent_givenNotifyMacroUpdate_shouldSendMacroCreateEmailAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
+    final var sagaId = UUID.randomUUID();
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_UPDATE)
+      .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
+      .replyTo("local")
+      .sagaId(sagaId)
+      .build(), null);
+    this.waitForAsyncToFinish(PENDING_EMAIL_ACK.getCode());
+    final var record = this.repository.findBySagaIdAndEventType(sagaId, EventType.NOTIFY_MACRO_UPDATE.toString());
+    assertThat(record).isPresent();
+    assertThat(record.get().getEventStatus()).isEqualTo(PENDING_EMAIL_ACK.getCode());
+  }
+
   GMPRequestCompleteEmailEntity createCompletedEmailEntity() {
     final var entity = new GMPRequestCompleteEmailEntity();
     entity.setFirstName("FirstName");
@@ -384,6 +439,18 @@ public class EventHandlerDelegatorServiceTest {
     entity.setDateTime(LocalDateTime.now().toString());
     entity.setFailReason("test");
     entity.setFileName("test");
+    return entity;
+  }
+
+  MacroEditNotificationEntity createMacroNotificationEntity() {
+    final var entity = new MacroEditNotificationEntity();
+    entity.setToEmail("test@email.co");
+    entity.setFromEmail("test@email.co");
+    entity.setAppName("PEN Registry");
+    entity.setBusinessUseTypeName("GetMyPEN");
+    entity.setMacroCode("!MID");
+    entity.setMacroTypeCode("MOREINFO");
+    entity.setMacroText("You have not declared any middle names.");
     return entity;
   }
 
