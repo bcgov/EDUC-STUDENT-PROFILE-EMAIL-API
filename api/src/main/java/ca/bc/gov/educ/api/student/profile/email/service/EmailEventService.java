@@ -66,11 +66,13 @@ public class EmailEventService {
   }
 
   private EmailEventEntity createEmailEvent(final Event event) {
+    final var eventType = event.getEventType().toString();
+    final var user = eventType.substring(0, Math.min(eventType.length(), 32));
     return EmailEventEntity.builder()
         .createDate(LocalDateTime.now())
         .updateDate(LocalDateTime.now())
-        .createUser(event.getEventType().toString().substring(0, 32)) //need to discuss what to put here.
-        .updateUser(event.getEventType().toString().substring(0, 32)) //.substring(0, 32)
+        .createUser(user) //need to discuss what to put here.
+        .updateUser(user)
         .eventPayload(event.getEventPayload())
         .eventType(event.getEventType().toString())
         .sagaId(event.getSagaId())
