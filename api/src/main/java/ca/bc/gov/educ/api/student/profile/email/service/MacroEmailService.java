@@ -23,7 +23,7 @@ public class MacroEmailService {
     this.chesEmailService = chesEmailService;
   }
 
-  public void notifyMacroEdit(final MacroEditNotificationEntity macroEditNotificationEntity, final Boolean newMacro) {
+  public void notifyMacroEdit(final MacroEditNotificationEntity macroEditNotificationEntity, final boolean newMacro) {
     log.debug("Sending macro edit email");
     final var bodyTemplate = newMacro ? this.props.getMacroCreateEmailTemplate() : this.props.getMacroUpdateEmailTemplate();
     final var body = MessageFormat.format(bodyTemplate.replace("'", "''"), macroEditNotificationEntity.getBusinessUseTypeName(), macroEditNotificationEntity.getMacroCode(), macroEditNotificationEntity.getMacroTypeCode(), macroEditNotificationEntity.getMacroText());
