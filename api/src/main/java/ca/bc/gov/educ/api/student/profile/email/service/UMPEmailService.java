@@ -22,6 +22,7 @@ public class UMPEmailService {
   private static final String STUDENT_PROFILE_REQUEST = "Your Personal Education Number(PEN) Info Update Request";
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your UpdateMyPENInfo request within 24 hours of receiving this email";
   private static final String FROM_EMAIL = "noreply.getmypen@gov.bc.ca";
+  private static final String LOGIN_URL = "loginUrl";
   private final ApplicationProperties props;
   @Getter(PRIVATE)
   private final EmailNotificationService emailNotificationService;
@@ -40,7 +41,7 @@ public class UMPEmailService {
       .toEmail(email.getEmailAddress())
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("completedRequest.ump")
-      .emailFields(Map.of("firstName", email.getFirstName(), "loginUrl", loginUrl))
+      .emailFields(Map.of("firstName", email.getFirstName(), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed UMP email sent successfully");
@@ -55,7 +56,7 @@ public class UMPEmailService {
       .toEmail(email.getEmailAddress())
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("rejectedRequest.ump")
-      .emailFields(Map.of("rejectionReason", email.getRejectionReason(), "loginUrl", loginUrl))
+      .emailFields(Map.of("rejectionReason", email.getRejectionReason(), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Rejected UMP email sent successfully");
@@ -69,7 +70,7 @@ public class UMPEmailService {
       .toEmail(email.getEmailAddress())
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("additionalInfoRequested.ump")
-      .emailFields(Map.of("loginUrl", loginUrl))
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Additional info UMP email sent successfully");
@@ -82,7 +83,7 @@ public class UMPEmailService {
       .toEmail(emailEntity.getEmailAddress())
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("notify.stale.return.ump")
-      .emailFields(Map.of("loginUrl", loginUrl))
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Stale Return Notification UMP email sent successfully");

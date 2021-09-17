@@ -11,6 +11,7 @@
   <properties>
     <sonar.language>java</sonar.language>
     <sonar.exclusions>src/main/resources/**,
+      src/test/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/mappers/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/exception/**,
       src/main/java/ca/bc/gov/educ/api/student/profile/email/model/**,

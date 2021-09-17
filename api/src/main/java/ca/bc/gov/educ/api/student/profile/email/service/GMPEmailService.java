@@ -23,6 +23,7 @@ public class GMPEmailService {
   private static final String PERSONAL_EDUCATION_NUMBER_PEN_REQUEST = "Your Personal Education Number (PEN) Request";
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your GetMyPEN request within 24 hours of receiving this email";
   private static final String FROM_EMAIL = "noreply.getmypen@gov.bc.ca";
+  private static final String LOGIN_URL = "loginUrl";
   private final ApplicationProperties props;
 
   @Getter
@@ -42,7 +43,7 @@ public class GMPEmailService {
       .toEmail(penRequest.getEmailAddress())
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName(demographicsChanged ? "completedRequest.demographicChange.gmp" : "completedRequest.gmp")
-      .emailFields(Map.of("firstName", penRequest.getFirstName(), "loginUrl", loginUrl))
+      .emailFields(Map.of("firstName", penRequest.getFirstName(), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed PEN email sent successfully");
@@ -57,7 +58,7 @@ public class GMPEmailService {
       .toEmail(penRequest.getEmailAddress())
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("rejectedRequest.gmp")
-      .emailFields(Map.of("rejectionReason", penRequest.getRejectionReason(), "loginUrl", loginUrl))
+      .emailFields(Map.of("rejectionReason", penRequest.getRejectionReason(), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Rejected PEN email sent successfully");
@@ -71,7 +72,7 @@ public class GMPEmailService {
       .toEmail(penRequest.getEmailAddress())
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("additionalInfoRequested.gmp")
-      .emailFields(Map.of("loginUrl", loginUrl))
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Additional info PEN email sent successfully");
@@ -85,7 +86,7 @@ public class GMPEmailService {
       .toEmail(penRequest.getEmailAddress())
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("notify.stale.return.gmp")
-      .emailFields(Map.of("loginUrl", loginUrl))
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Stale Return Notification GMP email sent successfully");

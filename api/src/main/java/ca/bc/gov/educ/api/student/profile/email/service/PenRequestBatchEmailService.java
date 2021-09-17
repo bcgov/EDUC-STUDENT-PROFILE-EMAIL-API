@@ -15,6 +15,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class PenRequestBatchEmailService {
+  private static final String SUBMISSION_NUMBER = "submissionNumber";
   @Getter(AccessLevel.PRIVATE)
   private final PenRequestBatchProperties props;
 
@@ -33,7 +34,7 @@ public class PenRequestBatchEmailService {
       .toEmail(errorNotificationEntity.getToEmail())
       .subject(subject)
       .templateName("notify.school.incorrect.format.file")
-      .emailFields(Map.of("submissionNumber", errorNotificationEntity.getSubmissionNumber(), "dateTime", errorNotificationEntity.getDateTime(), "failReason", errorNotificationEntity.getFailReason(), "fromEmail", errorNotificationEntity.getFromEmail()))
+      .emailFields(Map.of(SUBMISSION_NUMBER, errorNotificationEntity.getSubmissionNumber(), "dateTime", errorNotificationEntity.getDateTime(), "failReason", errorNotificationEntity.getFailReason(), "fromEmail", errorNotificationEntity.getFromEmail()))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
   }
@@ -69,7 +70,7 @@ public class PenRequestBatchEmailService {
       .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
       .subject(subject)
       .templateName(templateName)
-      .emailFields(Map.of("submissionNumber", archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
+      .emailFields(Map.of(SUBMISSION_NUMBER, archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
       .build();
   }
 
@@ -81,7 +82,7 @@ public class PenRequestBatchEmailService {
       .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
       .subject(subject)
       .templateName("penRequestBatch.archive.hasNoSchoolContact")
-      .emailFields(Map.of("mincode", archivePenRequestBatchEmailEntity.getMincode(), "submissionNumber", archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
+      .emailFields(Map.of("mincode", archivePenRequestBatchEmailEntity.getMincode(), SUBMISSION_NUMBER, archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed archive pen request batch has school contact email successfully");
