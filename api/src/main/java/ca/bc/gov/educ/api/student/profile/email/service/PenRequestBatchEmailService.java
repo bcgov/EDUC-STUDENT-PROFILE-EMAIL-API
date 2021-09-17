@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
+import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -17,51 +19,71 @@ public class PenRequestBatchEmailService {
   private final PenRequestBatchProperties props;
 
   @Getter(AccessLevel.PRIVATE)
-  private final CHESEmailService chesEmailService;
+  private final EmailNotificationService emailNotificationService;
 
-  public PenRequestBatchEmailService(final PenRequestBatchProperties props, final CHESEmailService chesEmailService) {
+  public PenRequestBatchEmailService(final PenRequestBatchProperties props, final EmailNotificationService emailNotificationService) {
     this.props = props;
-    this.chesEmailService = chesEmailService;
+    this.emailNotificationService = emailNotificationService;
   }
 
   public void notifySchoolFileFormatIncorrect(final PenRequestBatchSchoolErrorNotificationEntity errorNotificationEntity) {
-    final String body = MessageFormat.format(this.props.getEmailTemplateNotifySchoolIncorrectFormatFile().replace("'", "''"), errorNotificationEntity.getSubmissionNumber(), errorNotificationEntity.getDateTime(), errorNotificationEntity.getFailReason(), errorNotificationEntity.getFromEmail());
     final String subject = "PEN Request could not be processed for File: ".concat(errorNotificationEntity.getFileName()).concat(" with Submission Number : ").concat(errorNotificationEntity.getSubmissionNumber());
-    this.getChesEmailService().sendEmail(errorNotificationEntity.getFromEmail(), errorNotificationEntity.getToEmail(), body, subject);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(errorNotificationEntity.getFromEmail())
+      .toEmail(errorNotificationEntity.getToEmail())
+      .subject(subject)
+      .templateName("notify.school.incorrect.format.file")
+      .emailFields(Map.of("submissionNumber", errorNotificationEntity.getSubmissionNumber(), "dateTime", errorNotificationEntity.getDateTime(), "failReason", errorNotificationEntity.getFailReason(), "fromEmail", errorNotificationEntity.getFromEmail()))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
   }
 
   public void sendArchivePenRequestBatchHasSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
-    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
-    this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), this.getEmailBody(archivePenRequestBatchEmailEntity), subject);
+    this.getEmailNotificationService().sendEmail(this.getEmailBody(archivePenRequestBatchEmailEntity));
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
 
-  private String getEmailBody(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
-    final String body;
+  private EmailNotificationEntity getEmailBody(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
+    final String templateName;
     if (archivePenRequestBatchEmailEntity.getPendingRecords() != null) {
       switch (archivePenRequestBatchEmailEntity.getPendingRecords()) {
         case ALL:
-          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplateAllPending().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          templateName = "penRequestBatch.archive.hasSchoolContact.pending.all";
           break;
         case SOME:
-          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplateSomePending().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          templateName = "penRequestBatch.archive.hasSchoolContact.pending.some";
           break;
         default:
-          body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+          templateName = "penRequestBatch.archive.hasSchoolContact";
           break;
       }
     } else {
-      body = MessageFormat.format(this.props.getArchivedPenRequestBatchToSchoolEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
+      templateName = "penRequestBatch.archive.hasSchoolContact";
     }
-    return body;
+
+    final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
+
+    return EmailNotificationEntity.builder()
+      .fromEmail(archivePenRequestBatchEmailEntity.getFromEmail())
+      .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
+      .subject(subject)
+      .templateName(templateName)
+      .emailFields(Map.of("submissionNumber", archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
+      .build();
   }
 
   public void sendArchivePenRequestBatchHasNoSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
-    final String body = MessageFormat.format(this.props.getArchivedPenRequestBatchNoSchoolContactEmailTemplate().replace("'", "''"), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), this.props.getPenCoordinatorLoginUrl(), this.props.getPenCoordinatorLoginUrl());
     final String subject = MessageFormat.format(this.props.getArchivePrbHasNoSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode());
-    this.getChesEmailService().sendEmail(archivePenRequestBatchEmailEntity.getFromEmail(), archivePenRequestBatchEmailEntity.getToEmail(), body, subject);
+    final var emailNotificationEntity =  EmailNotificationEntity.builder()
+      .fromEmail(archivePenRequestBatchEmailEntity.getFromEmail())
+      .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
+      .subject(subject)
+      .templateName("penRequestBatch.archive.hasNoSchoolContact")
+      .emailFields(Map.of("mincode", archivePenRequestBatchEmailEntity.getMincode(), "submissionNumber", archivePenRequestBatchEmailEntity.getSubmissionNumber(), "penCoordinatorLoginUrl", this.props.getPenCoordinatorLoginUrl()))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
 }

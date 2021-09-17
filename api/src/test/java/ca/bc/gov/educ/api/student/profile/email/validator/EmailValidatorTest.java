@@ -7,9 +7,11 @@ import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
 @RunWith(JUnitParamsRunner.class)
 public class EmailValidatorTest {
-  private final EmailValidator validator = new EmailValidator();
+  private final EmailValidator validator = new EmailValidator(Map.of("template1", "test template"));
 
   @Test
   @Parameters({

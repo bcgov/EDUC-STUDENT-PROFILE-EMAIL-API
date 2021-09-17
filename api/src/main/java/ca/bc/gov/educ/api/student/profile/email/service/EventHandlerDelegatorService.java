@@ -105,6 +105,11 @@ public class EventHandlerDelegatorService {
           response = this.getMacroEventHandlerService().handleNotifyMacroUpdate(event);
           this.publishToNATS(event, message, response);
           break;
+        case SEND_EMAIL:
+          log.info("received SEND_EMAIL event :: {}", event);
+          response = this.getEventHandlerService().handleSendEmail(event);
+          this.publishToNATS(event, message, response);
+          break;
         default:
           log.info("silently ignoring other events :: {}", event);
           break;

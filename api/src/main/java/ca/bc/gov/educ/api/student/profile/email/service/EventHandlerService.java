@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
 import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
@@ -32,11 +33,15 @@ public class EventHandlerService extends BaseEventHandlerService {
   @Getter(PRIVATE)
   private final GMPEmailService gmpEmailService;
 
+  @Getter(PRIVATE)
+  private final EmailNotificationService emailNotificationService;
+
   @Autowired
-  public EventHandlerService(final UMPEmailService umpEmailService, final EmailEventService emailEventService, final GMPEmailService gmpEmailService) {
+  public EventHandlerService(final UMPEmailService umpEmailService, final EmailEventService emailEventService, final GMPEmailService gmpEmailService, final EmailNotificationService emailNotificationService) {
     this.umpEmailService = umpEmailService;
     this.emailEventService = emailEventService;
     this.gmpEmailService = gmpEmailService;
+    this.emailNotificationService = emailNotificationService;
   }
 
 
@@ -149,6 +154,26 @@ public class EventHandlerService extends BaseEventHandlerService {
       this.asyncExecutor.execute(() -> {
         try {
           this.getGmpEmailService().sendRejectedPENRequestEmail(gmpRequestRejectedEmailEntity);
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
+          log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
+        } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.
+          log.warn(EXCEPTION_FOR, event, exception);
+          this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PENDING_EMAIL_ACK.getCode());
+        }
+      });
+    }
+    return this.emailAPIEventProcessed(emailEvent);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public byte[] handleSendEmail(final Event event) throws JsonProcessingException {
+    final var emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.EMAIL_SENT);// make sure the db operation is successful before sending the email.
+    final var emailNotificationEntity = JsonUtil.getJsonObjectFromString(EmailNotificationEntity.class, event.getEventPayload());
+    if (StringUtils.equals(PENDING_EMAIL_ACK.getCode(), emailEvent.getEventStatus())) {
+      this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), PROCESSING.getCode());// mark it processing so that scheduler does not pick it up again until it has failed.
+      this.asyncExecutor.execute(() -> {
+        try {
+          this.getEmailNotificationService().sendEmail(emailNotificationEntity);
           this.getEmailEventService().updateEventStatus(emailEvent.getEventId(), MESSAGE_PUBLISHED.toString());
           log.info(EMAIL_SENT_SUCCESS_FOR_SAGA_ID, event.getSagaId());
         } catch (final Exception exception) { // put it back to pending, so that it will be picked up by the scheduler again.

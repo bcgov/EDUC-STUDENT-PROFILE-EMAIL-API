@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
+import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -16,22 +18,28 @@ public class MacroEmailService {
   private final MacroProperties props;
 
   @Getter(AccessLevel.PRIVATE)
-  private final CHESEmailService chesEmailService;
+  private final EmailNotificationService emailNotificationService;
 
-  public MacroEmailService(final MacroProperties props, final CHESEmailService chesEmailService) {
+  public MacroEmailService(final MacroProperties props, final EmailNotificationService emailNotificationService) {
     this.props = props;
-    this.chesEmailService = chesEmailService;
+    this.emailNotificationService = emailNotificationService;
   }
 
   public void notifyMacroEdit(final MacroEditNotificationEntity macroEditNotificationEntity, final boolean newMacro) {
     log.debug("Sending macro edit email");
-    final var bodyTemplate = newMacro ? this.props.getMacroCreateEmailTemplate() : this.props.getMacroUpdateEmailTemplate();
-    final var body = MessageFormat.format(bodyTemplate.replace("'", "''"), macroEditNotificationEntity.getBusinessUseTypeName(), macroEditNotificationEntity.getMacroCode(), macroEditNotificationEntity.getMacroTypeCode(), macroEditNotificationEntity.getMacroText());
 
     final var subjectTemplate = newMacro ? this.props.getMacroCreateEmailSubject() : this.props.getMacroUpdateEmailSubject();
     final String subject = MessageFormat.format(subjectTemplate, macroEditNotificationEntity.getAppName());
 
-    this.getChesEmailService().sendEmail(macroEditNotificationEntity.getFromEmail(), macroEditNotificationEntity.getToEmail(), body, subject);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(macroEditNotificationEntity.getFromEmail())
+      .toEmail(macroEditNotificationEntity.getToEmail())
+      .subject(subject)
+      .templateName(newMacro ? "macro.create" : "macro.update")
+      .emailFields(Map.of("businessUseTypeName", macroEditNotificationEntity.getBusinessUseTypeName(), "macroCode", macroEditNotificationEntity.getMacroCode(), "macroTypeCode", macroEditNotificationEntity.getMacroTypeCode(), "macroText", macroEditNotificationEntity.getMacroText()))
+      .build();
+
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed macro edit email successfully");
   }
 }
