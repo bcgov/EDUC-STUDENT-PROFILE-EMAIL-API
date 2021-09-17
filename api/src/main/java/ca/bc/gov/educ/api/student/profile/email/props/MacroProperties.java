@@ -9,12 +9,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class MacroProperties {
-  @Value("${email.template.macro.create}")
-  private String macroCreateEmailTemplate;
-
-  @Value("${email.template.macro.update}")
-  private String macroUpdateEmailTemplate;
-
   @Value("${email.subject.macro.create}")
   private String macroCreateEmailSubject;
 

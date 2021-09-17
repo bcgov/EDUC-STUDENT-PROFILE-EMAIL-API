@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.struct.macro;
+package ca.bc.gov.educ.api.student.profile.email.struct.v1.macro;
 
 import lombok.*;
 

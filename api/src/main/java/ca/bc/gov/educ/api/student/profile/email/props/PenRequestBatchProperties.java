@@ -9,15 +9,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class PenRequestBatchProperties {
-  @Value("${email.template.notify.school.incorrect.format.file}")
-  private String emailTemplateNotifySchoolIncorrectFormatFile;
-
-  @Value("${email.template.penRequestBatch.archive.hasSchoolContact}")
-  private String archivedPenRequestBatchToSchoolEmailTemplate;
-
-  @Value("${email.template.penRequestBatch.archive.hasNoSchoolContact}")
-  private String archivedPenRequestBatchNoSchoolContactEmailTemplate;
-
   @Value("${url.login.penRequestBatch.penCoordinator}")
   private String penCoordinatorLoginUrl;
 
@@ -26,10 +17,4 @@ public class PenRequestBatchProperties {
 
   @Value("${email.subject.penRequestBatch.archive.hasNoSchoolContact}")
   private String archivePrbHasNoSchoolContactEmailSubject;
-
-  @Value("${email.template.penRequestBatch.archive.hasSchoolContact.pending.all}")
-  private String archivedPenRequestBatchToSchoolEmailTemplateAllPending;
-
-  @Value("${email.template.penRequestBatch.archive.hasSchoolContact.pending.some}")
-  private String archivedPenRequestBatchToSchoolEmailTemplateSomePending;
 }

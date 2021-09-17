@@ -3,13 +3,14 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidParameterException;
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
+import java.util.Map;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
@@ -21,25 +22,30 @@ public class GMPEmailService {
 
   private static final String PERSONAL_EDUCATION_NUMBER_PEN_REQUEST = "Your Personal Education Number (PEN) Request";
   private static final String VERIFY_EMAIL_SUBJECT = "Activate your GetMyPEN request within 24 hours of receiving this email";
+  private static final String FROM_EMAIL = "noreply.getmypen@gov.bc.ca";
+  private static final String LOGIN_URL = "loginUrl";
   private final ApplicationProperties props;
 
   @Getter
-  private final CHESEmailService chesEmailService;
+  private final EmailNotificationService emailNotificationService;
 
   @Autowired
-  public GMPEmailService(final ApplicationProperties props, final CHESEmailService chesEmailService) {
+  public GMPEmailService(final ApplicationProperties props, final EmailNotificationService emailNotificationService) {
     this.props = props;
-    this.chesEmailService = chesEmailService;
+    this.emailNotificationService = emailNotificationService;
   }
 
   public void sendCompletedPENRequestEmail(final GMPRequestCompleteEmailEntity penRequest, final boolean demographicsChanged) {
     final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending completed PEN email");
-    if (demographicsChanged) {
-      this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateCompleteRequestDemographicChangeGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
-    } else {
-      this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateCompletedRequestGMP().replace("'", "''"), penRequest.getFirstName(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
-    }
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(FROM_EMAIL)
+      .toEmail(penRequest.getEmailAddress())
+      .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
+      .templateName(demographicsChanged ? "completedRequest.demographicChange.gmp" : "completedRequest.gmp")
+      .emailFields(Map.of("firstName", penRequest.getFirstName(), LOGIN_URL, loginUrl))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed PEN email sent successfully");
   }
 
@@ -47,21 +53,42 @@ public class GMPEmailService {
   public void sendRejectedPENRequestEmail(final GMPRequestRejectedEmailEntity penRequest) {
     final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending rejected PEN email");
-    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateRejectedRequestGMP().replace("'", "''"), penRequest.getRejectionReason(), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(FROM_EMAIL)
+      .toEmail(penRequest.getEmailAddress())
+      .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
+      .templateName("rejectedRequest.gmp")
+      .emailFields(Map.of("rejectionReason", penRequest.getRejectionReason(), LOGIN_URL, loginUrl))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Rejected PEN email sent successfully");
   }
 
   public void sendAdditionalInfoEmail(final GMPRequestAdditionalInfoEmailEntity penRequest) {
     final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending additional info PEN email");
-    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateAdditionalInfoGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(FROM_EMAIL)
+      .toEmail(penRequest.getEmailAddress())
+      .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
+      .templateName("additionalInfoRequested.gmp")
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Additional info PEN email sent successfully");
   }
 
   public void sendStaleReturnedRequestNotificationEmail(final GMPRequestAdditionalInfoEmailEntity penRequest) {
     final String loginUrl = this.getLoginUrl(penRequest);
     log.debug("Sending sendStaleReturnedRequestNotificationEmail info GMP email");
-    this.getChesEmailService().sendEmail(penRequest, MessageFormat.format(this.props.getEmailTemplateNotifyStaleReturnGMP().replace("'", "''"), loginUrl, loginUrl, loginUrl), PERSONAL_EDUCATION_NUMBER_PEN_REQUEST);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(FROM_EMAIL)
+      .toEmail(penRequest.getEmailAddress())
+      .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
+      .templateName("notify.stale.return.gmp")
+      .emailFields(Map.of(LOGIN_URL, loginUrl))
+      .build();
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Stale Return Notification GMP email sent successfully");
   }
 
@@ -73,11 +100,15 @@ public class GMPEmailService {
    */
   public void sendVerifyEmail(final GMPRequestEmailVerificationEntity emailVerificationEntity) {
     log.debug("sending verify email.");
-    final String emailBody = MessageFormat.format(this.props.getEmailTemplateVerifyEmailGMP().replace("'", "''"),
-        emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
-        emailVerificationEntity.getIdentityTypeLabel(), emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken(),
-        emailVerificationEntity.getVerificationUrl(), emailVerificationEntity.getJwtToken());
-    this.getChesEmailService().sendEmail(emailVerificationEntity, emailBody, VERIFY_EMAIL_SUBJECT);
+    final var emailNotificationEntity = EmailNotificationEntity.builder()
+      .fromEmail(FROM_EMAIL)
+      .toEmail(emailVerificationEntity.getEmailAddress())
+      .subject(VERIFY_EMAIL_SUBJECT)
+      .templateName("verifyEmail.gmp")
+      .emailFields(Map.of("identityTypeLabel", emailVerificationEntity.getIdentityTypeLabel(), "verificationUrl", emailVerificationEntity.getVerificationUrl(), "jwtToken", emailVerificationEntity.getJwtToken()))
+      .build();
+
+    this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("verification email sent successfully.");
   }
 

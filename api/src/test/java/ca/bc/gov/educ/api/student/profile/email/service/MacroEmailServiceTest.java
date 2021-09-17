@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +67,7 @@ public class MacroEmailServiceTest {
   }
 
   String getMacroCreateBody() {
-    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>New macro was created for GetMyPEN:<br><br>Code: !MID<br>Type: MOREINFO<br>Text: You have not declared any middle names.</body></html>";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>New macro was created for <span>GetMyPEN</span>:<br><br>Code: <span>!MID</span><br>Type: <span>MOREINFO</span><br>Text: <span>You have not declared any middle names.</span></body></html>";
   }
 
   String getMacroUpdateSubject() {
@@ -75,6 +75,6 @@ public class MacroEmailServiceTest {
   }
 
   String getMacroUpdateBody() {
-    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>GetMyPEN macro !MID was updated to:<br><br>Code: !MID<br>Type: MOREINFO<br>Text: You have not declared any middle names.</body></html>";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body><span>GetMyPEN</span> macro <span>!MID</span> was updated to:<br><br>Code: <span>!MID</span><br>Type: <span>MOREINFO</span><br>Text: <span>You have not declared any middle names.</span></body></html>";
   }
 }

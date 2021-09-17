@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.BaseEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.BaseEmailEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,14 +1,11 @@
-package ca.bc.gov.educ.api.student.profile.email.endpoint;
+package ca.bc.gov.educ.api.student.profile.email.endpoint.v1;
 
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPAdditionalInfoEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestCompleteEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestEmailVerificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestRejectedEmailEntity;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestRejectedEmailEntity;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/ump")
 @Tag(name = "Update My Pen Email")
-@OpenAPIDefinition(info = @Info(title = "API for Student Profile Email.", description = "This API is responsible for sending different type of email notification to students for both GMP and UMP application.", version = "1"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"SEND_STUDENT_PROFILE_EMAIL"})})
 public interface UpdateMyProfileEmailEndpoint {
 
   @PostMapping("/complete")

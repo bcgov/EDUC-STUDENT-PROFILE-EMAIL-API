@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.student.profile.email.struct.gmpump;
+package ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

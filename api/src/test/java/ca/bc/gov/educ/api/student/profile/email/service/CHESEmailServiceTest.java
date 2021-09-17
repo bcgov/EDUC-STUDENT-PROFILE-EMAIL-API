@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestEmailVerificationEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

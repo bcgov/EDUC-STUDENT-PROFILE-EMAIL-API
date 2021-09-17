@@ -1,9 +1,9 @@
-package ca.bc.gov.educ.api.student.profile.email.endpoint;
+package ca.bc.gov.educ.api.student.profile.email.endpoint.v1;
 
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestAdditionalInfoEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestCompleteEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestEmailVerificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestRejectedEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestRejectedEmailEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

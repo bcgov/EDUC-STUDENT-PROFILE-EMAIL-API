@@ -2,8 +2,8 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PendingRecords;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.PendingRecords;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +73,7 @@ public class PenRequestBatchEmailServiceTest {
   }
 
   private String emailBodyPendingAll() {
-    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>Your PEN WEB Request, submission 000001, has not been processed due to errors. Please go to <a href=test url>test url</a> and logging into the PEN Web System to review the PEN Request errors; the record data will need to be updated in the school's Student Information System (MyEducation typically) and resubmitted in a new batch file to the Ministry, in order to receive the requested PENs.  If you do not understand the cause of error message, or if you are unsure how to correct the data, please contact the PENS.Coordinator@gov.bc.ca email.</html>";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>Your PEN WEB Request, submission <span>000001</span>, has not been processed due to errors. Please go to <a href=\"test url\">test url</a> and log into the PEN Web System to review the PEN Request errors; the record data will need to be updated in the school's Student Information System (MyEducation typically) and resubmitted in a new batch file to the Ministry, in order to receive the requested PENs. If you do not understand the cause of error message, or if you are unsure how to correct the data, please contact the PENS.Coordinator@gov.bc.ca email.</body></html>";
   }
 
 
@@ -95,7 +95,7 @@ public class PenRequestBatchEmailServiceTest {
   }
 
   String getArchivePenRequestBatchHasSchoolContactBody() {
-    return "test 000001 test url";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>Your PEN WEB Request, submission <span>000001</span>, has been processed and the PEN Activity Report is available for download by going to <a href=\"test url\">test url</a> and logging into the PEN Web System.</body></html>";
   }
 
   String getArchivePenRequestBatchHasSchoolContactSubject() {
@@ -103,11 +103,11 @@ public class PenRequestBatchEmailServiceTest {
   }
 
   String emailBodyPendingSome() {
-    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>Your PEN WEB Request, submission 000001, has been processed and the PEN Activity Report is available for download by going to <a href=test url>test url</a> and logging into the PEN Web System. <br> Please note that one or more pending PEN Requests require errors to be fixed by updating the data in the school's Student Information System (MyEducation typically) and resubmitting the request in a new Batch file. Alternatively, you may provide the requested additional information to the Ministry PEN Coordinator to have the file processed again.</html>";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>Your PEN WEB Request, submission <span>000001</span>, has been processed and the PEN Activity Report is available for download by going to <a href=\"test url\">test url</a> and logging into the PEN Web System. <br><br>Please note that one or more pending PEN Requests require errors to be fixed by updating the data in the school's Student Information System (MyEducation typically) and resubmitting the request in a new Batch file. Alternatively, you may provide the requested additional information to the Ministry PEN Coordinator to have the file processed again.</body></html>";
   }
 
   String getArchivePenRequestBatchHasNoSchoolContactBody() {
-    return "test 123 000001 test url";
+    return "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"></head><body>The following message was NOT sent to <span>123</span> because there is NO email address in for this school/district in the PEN Coordinator table.<br><br>Your PEN WEB Request, submission <span>000001</span>, has been processed and is available by going to <a href=\"test url\">test url</a> and logging into the PEN Web System.</body></html>";
   }
 
   String getArchivePenRequestBatchHasNoSchoolContactSubject() {

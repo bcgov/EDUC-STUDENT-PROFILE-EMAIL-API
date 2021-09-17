@@ -1,10 +1,10 @@
-package ca.bc.gov.educ.api.student.profile.email.controller;
+package ca.bc.gov.educ.api.student.profile.email.controller.v1;
 
-import ca.bc.gov.educ.api.student.profile.email.endpoint.UpdateMyProfileEmailEndpoint;
+import ca.bc.gov.educ.api.student.profile.email.endpoint.v1.UpdateMyProfileEmailEndpoint;
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.student.profile.email.exception.errors.ApiError;
 import ca.bc.gov.educ.api.student.profile.email.service.UMPEmailService;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
 import ca.bc.gov.educ.api.student.profile.email.validator.EmailValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
