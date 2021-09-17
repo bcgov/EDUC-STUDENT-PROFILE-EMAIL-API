@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

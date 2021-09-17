@@ -1,10 +1,11 @@
 package ca.bc.gov.educ.api.student.profile.email.controller;
 
+import ca.bc.gov.educ.api.student.profile.email.controller.v1.GetMyPenEmailController;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestAdditionalInfoEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestCompleteEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestEmailVerificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestRejectedEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestRejectedEmailEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;

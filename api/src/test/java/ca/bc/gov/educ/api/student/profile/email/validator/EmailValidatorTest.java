@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.student.profile.email.validator;
 
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestEmailVerificationEntity;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lombok.val;

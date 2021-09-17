@@ -1,10 +1,11 @@
 package ca.bc.gov.educ.api.student.profile.email.controller;
 
+import ca.bc.gov.educ.api.student.profile.email.controller.v1.UpdateMyProfileEmailController;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPAdditionalInfoEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestCompleteEmailEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestEmailVerificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.UMPRequestRejectedEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPAdditionalInfoEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestCompleteEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestRejectedEmailEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;

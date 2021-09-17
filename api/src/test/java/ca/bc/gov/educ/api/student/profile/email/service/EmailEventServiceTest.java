@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.repository.StudentProfileRequestEmailEventRepository;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.GMPRequestRejectedEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.GMPRequestRejectedEmailEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.val;

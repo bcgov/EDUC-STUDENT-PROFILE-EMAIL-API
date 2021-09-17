@@ -3,8 +3,8 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidParameterException;
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.*;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

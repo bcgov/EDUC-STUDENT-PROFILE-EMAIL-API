@@ -1,7 +1,8 @@
 package ca.bc.gov.educ.api.student.profile.email.controller;
 
+import ca.bc.gov.educ.api.student.profile.email.controller.v2.EmailNotificationController;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class EmailNotificationControllerTest {
   @Test
   public void sendEmail_givenValidPayloadWith_GMP_VERIFY_EMAIL_shouldSendEmail() throws Exception {
     final var entity = this.createEmailNotificationEntity("verifyEmail.gmp", Map.of("identityTypeLabel", "Basic BCeID","verificationUrl", "https://test.co/verify?verificationToken", "jwtToken", "12345ABCDE"));
-    this.mockMvc.perform(post("/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
+    this.mockMvc.perform(post("/api/v2/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
     verify(this.restUtils, atLeastOnce()).sendEmail(eq(entity.getFromEmail()), eq(entity.getToEmail()), this.emailBodyCaptor.capture(), eq(entity.getSubject()));
     assertThat(this.emailBodyCaptor.getValue()).doesNotContainPattern("\\{\\d\\}");
@@ -70,7 +71,7 @@ public class EmailNotificationControllerTest {
   @Test
   public void sendEmail_givenValidPayloadWith_GMP_NOTIFY_STALE_RETURN_shouldSendEmail() throws Exception {
     final var entity = this.createEmailNotificationEntity("notify.stale.return.gmp", Map.of("loginUrl", "https://test.co"));
-    this.mockMvc.perform(post("/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
+    this.mockMvc.perform(post("/api/v2/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
     verify(this.restUtils, atLeastOnce()).sendEmail(eq(entity.getFromEmail()), eq(entity.getToEmail()), this.emailBodyCaptor.capture(), eq(entity.getSubject()));
     assertThat(this.emailBodyCaptor.getValue()).contains("<a href=\"https://test.co\">");
@@ -79,7 +80,7 @@ public class EmailNotificationControllerTest {
   @Test
   public void sendEmail_givenNotExistingTemplate_shouldReturnError() throws Exception {
     final var entity = this.createEmailNotificationEntity("not.existing", Map.of("loginUrl", "https://test.co"));
-    this.mockMvc.perform(post("/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
+    this.mockMvc.perform(post("/api/v2/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isBadRequest());
   }
 

@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

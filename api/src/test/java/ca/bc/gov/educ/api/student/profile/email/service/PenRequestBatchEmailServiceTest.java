@@ -2,8 +2,8 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.penrequestbatch.PendingRecords;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.PendingRecords;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;

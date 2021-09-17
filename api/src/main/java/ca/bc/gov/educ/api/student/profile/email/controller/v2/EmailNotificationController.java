@@ -1,10 +1,10 @@
-package ca.bc.gov.educ.api.student.profile.email.controller;
+package ca.bc.gov.educ.api.student.profile.email.controller.v2;
 
-import ca.bc.gov.educ.api.student.profile.email.endpoint.EmailNotificationEndpoint;
+import ca.bc.gov.educ.api.student.profile.email.endpoint.v2.EmailNotificationEndpoint;
 import ca.bc.gov.educ.api.student.profile.email.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.student.profile.email.exception.errors.ApiError;
 import ca.bc.gov.educ.api.student.profile.email.service.EmailNotificationService;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.validator.EmailValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

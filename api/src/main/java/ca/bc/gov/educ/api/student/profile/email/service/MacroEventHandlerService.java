@@ -3,7 +3,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 import ca.bc.gov.educ.api.student.profile.email.constants.EventOutcome;
 import ca.bc.gov.educ.api.student.profile.email.model.EmailEventEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.Event;
-import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;

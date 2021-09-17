@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.validator;
 
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.gmpump.BaseEmailEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.BaseEmailEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.stereotype.Component;

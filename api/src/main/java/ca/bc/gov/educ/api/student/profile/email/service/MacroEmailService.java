@@ -1,8 +1,8 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
-import ca.bc.gov.educ.api.student.profile.email.struct.macro.MacroEditNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

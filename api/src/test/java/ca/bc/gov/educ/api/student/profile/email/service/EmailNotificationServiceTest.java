@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
-import ca.bc.gov.educ.api.student.profile.email.struct.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
