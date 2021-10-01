@@ -59,6 +59,15 @@ public class GetMyPenEmailControllerTest {
   }
 
   @Test
+  public void sendCompletedPENRequestEmail_givenValidPayloadWithNullFirstName_shouldSendEmail() throws Exception {
+    final var entity = this.createEntityWithNullFirstName();
+    entity.setDemographicsChanged(false);
+    this.mockMvc.perform(post("/gmp/complete?demographicsChanged=false").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
+
+  }
+
+  @Test
 
   public void sendCompletedPENRequestEmail_givenValidPayload_shouldSendEmail2() throws Exception {
     final var entity = this.createEntity();
@@ -150,6 +159,14 @@ public class GetMyPenEmailControllerTest {
   GMPRequestCompleteEmailEntity createEntity() {
     final var entity = new GMPRequestCompleteEmailEntity();
     entity.setFirstName("FirstName");
+    entity.setEmailAddress("test@gmail.com");
+    entity.setIdentityType(BCSC.toString());
+    return entity;
+  }
+
+  GMPRequestCompleteEmailEntity createEntityWithNullFirstName() {
+    final var entity = new GMPRequestCompleteEmailEntity();
+    entity.setFirstName(null);
     entity.setEmailAddress("test@gmail.com");
     entity.setIdentityType(BCSC.toString());
     return entity;

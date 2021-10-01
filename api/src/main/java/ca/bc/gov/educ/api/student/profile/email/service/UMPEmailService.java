@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntit
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class UMPEmailService {
       .toEmail(email.getEmailAddress())
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("completedRequest.ump")
-      .emailFields(Map.of("firstName", email.getFirstName(), LOGIN_URL, loginUrl))
+      .emailFields(Map.of("firstName", StringUtils.defaultString(email.getFirstName()), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed UMP email sent successfully");

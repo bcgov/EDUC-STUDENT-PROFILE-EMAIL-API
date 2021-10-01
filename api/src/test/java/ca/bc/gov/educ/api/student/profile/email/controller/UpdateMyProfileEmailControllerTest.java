@@ -59,6 +59,13 @@ public class UpdateMyProfileEmailControllerTest {
   }
 
   @Test
+  public void sendCompletedRequestEmail_givenValidPayloadWithNullFirstName_shouldSendEmail() throws Exception {
+    final var entity = this.createEntityWithNullFirstName();
+    this.mockMvc.perform(post("/ump/complete").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON).content(asJsonString(entity))).andDo(print()).andExpect(status().isNoContent());
+  }
+
+  @Test
   public void sendCompletedRequestEmail_givenValidPayload_shouldSendEmail2() throws Exception {
     final var entity = this.createEntity();
     entity.setIdentityType(BASIC.name());
@@ -113,6 +120,14 @@ public class UpdateMyProfileEmailControllerTest {
   UMPRequestCompleteEmailEntity createEntity() {
     final var entity = new UMPRequestCompleteEmailEntity();
     entity.setFirstName("FirstName");
+    entity.setEmailAddress("test@gmail.com");
+    entity.setIdentityType(BCSC.toString());
+    return entity;
+  }
+
+  UMPRequestCompleteEmailEntity createEntityWithNullFirstName() {
+    final var entity = new UMPRequestCompleteEmailEntity();
+    entity.setFirstName(null);
     entity.setEmailAddress("test@gmail.com");
     entity.setIdentityType(BCSC.toString());
     return entity;
