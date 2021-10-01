@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntit
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class GMPEmailService {
       .toEmail(penRequest.getEmailAddress())
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName(demographicsChanged ? "completedRequest.demographicChange.gmp" : "completedRequest.gmp")
-      .emailFields(Map.of("firstName", penRequest.getFirstName(), LOGIN_URL, loginUrl))
+      .emailFields(Map.of("firstName", StringUtils.defaultString(penRequest.getFirstName()), LOGIN_URL, loginUrl))
       .build();
     this.getEmailNotificationService().sendEmail(emailNotificationEntity);
     log.debug("Completed PEN email sent successfully");

@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @ToString(callSuper = true)
 public class UMPRequestCompleteEmailEntity extends BaseEmailEntity {
 
-  @NotNull(message = "First Name can not be null")
   private String firstName;
 
 }
