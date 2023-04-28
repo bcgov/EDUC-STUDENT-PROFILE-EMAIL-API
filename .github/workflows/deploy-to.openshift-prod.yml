@@ -1,12 +1,13 @@
-name: Build & Deploy to DEV
+name: Deploy to PROD
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
+  # Added this comment
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  OPENSHIFT_NAMESPACE_DEV: ${{ secrets.PEN_NAMESPACE_NO_ENV }}-dev
+  OPENSHIFT_NAMESPACE: ${{ secrets.PEN_NAMESPACE_NO_ENV }}-prod
 
   DB_JDBC_CONNECT_STRING: ${{ secrets.DB_JDBC_CONNECT_STRING }}
   DB_PWD: ${{ secrets.DB_PWD }}
@@ -24,12 +25,7 @@ env:
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
-  # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
-  IMAGE_TAGS: ""
-
-  SPRING_BOOT_IMAGE_NAME: student-profile-email-api-master
-  DOCKER_ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca/docker-remote
-  ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
+  SPRING_BOOT_IMAGE_NAME: student-api-master
 
   APP_NAME: 'student-profile-email-api'
   DB_NAME: 'api_student_profile_email'
@@ -38,25 +34,24 @@ env:
   NAMESPACE: ${{ secrets.PEN_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
-  MIN_REPLICAS_DEV: "1"
-  MAX_REPLICAS_DEV: "1"
+  TARGET_ENV: "prod"
+  MIN_REPLICAS: "3"
+  MAX_REPLICAS: "3"
   MIN_CPU: "75m"
   MAX_CPU: "150m"
   MIN_MEM: "400Mi"
   MAX_MEM: "800Mi"
 
 on:
-  push:
-    branches:
-      - master
+  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:
 
 jobs:
-  build-and-deploy-dev:
-    name: Build and deploy to OpenShift DEV
+  openshift-ci-cd:
+    name: Deploy to OpenShift PROD
     # ubuntu-20.04 can also be used.
     runs-on: ubuntu-20.04
-    environment: dev
+    environment: production
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
@@ -71,6 +66,7 @@ jobs:
               OPENSHIFT_SERVER: `${{ secrets.OPENSHIFT_SERVER }}`,
               OPENSHIFT_TOKEN: `${{ secrets.OPENSHIFT_TOKEN }}`,
             };
+  
             const GHCR = "ghcr.io";
             if (`${{ env.IMAGE_REGISTRY }}`.startsWith(GHCR)) {
               core.info(`Image registry is ${GHCR} - no registry password required`);
@@ -79,6 +75,7 @@ jobs:
               core.info("A registry password is required");
               secrets["IMAGE_REGISTRY_PASSWORD"] = `${{ secrets.IMAGE_REGISTRY_PASSWORD }}`;
             }
+  
             const missingSecrets = Object.entries(secrets).filter(([ name, value ]) => {
               if (value.length === 0) {
                 core.error(`Secret "${name}" is not set`);
@@ -87,6 +84,7 @@ jobs:
               core.info(`✔️ Secret "${name}" is set`);
               return false;
             });
+  
             if (missingSecrets.length > 0) {
               core.setFailed(`❌ At least one required secret is not set in the repository. \n` +
                 "You can add it using:\n" +
@@ -97,45 +95,13 @@ jobs:
             else {
               core.info(`✅ All the required secrets are set`);
             }
+
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Determine image tags
-        if: env.IMAGE_TAGS == ''
-        run: |
-          echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.DOCKER_ARTIFACTORY_REPO }}
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      # https://github.com/redhat-actions/buildah-build#readme
-      - name: Build from Dockerfile
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: ${{ env.APP_NAME_FULL }}
-          tags: ${{ env.IMAGE_TAGS }}
-
-          # If you don't have a Dockerfile/Containerfile, refer to https://github.com/redhat-actions/buildah-build#scratch-build-inputs
-          # Or, perform a source-to-image build using https://github.com/redhat-actions/s2i-build
-          # Otherwise, point this to your Dockerfile/Containerfile relative to the repository root.
-          dockerfiles: |
-            ./Dockerfile
-      # https://github.com/redhat-actions/push-to-registry#readme
-      - name: Push to registry
-        id: push-image
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-          username: ${{ env.IMAGE_REGISTRY_USER }}
-          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
-
-      # The path the image was pushed to is now stored in ${{ steps.push-image.outputs.registry-path }}
+      - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
@@ -147,21 +113,21 @@ jobs:
 
       - name: Deploy API
         run: |
-          set -eu
+          set -eux
           # Login to OpenShift and select project
           oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
-          oc project ${{ env.OPENSHIFT_NAMESPACE_DEV }}
+          oc project ${{ env.OPENSHIFT_NAMESPACE }}
           # Cancel any rollouts in progress
           oc rollout cancel dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
           || true && echo "No rollout in progress"
           
-          oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ env.TAG }}
+          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ steps.get-latest-tag.outputs.tag }}
           
           # Process and apply deployment template
-          oc process -f tools/openshift/api.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE_DEV }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS_DEV }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS_DEV }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
+          oc process -f tools/openshift/api.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ steps.get-latest-tag.outputs.tag }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
           | oc apply -f -
           
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh | bash /dev/stdin dev ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.COMMON_NAMESPACE }} ${{ env.DB_JDBC_CONNECT_STRING }} ${{ env.DB_PWD }} ${{ env.DB_USER }} ${{ env.SPLUNK_TOKEN }} ${{ env.CHES_CLIENT_ID }} ${{ env.CHES_CLIENT_SECRET }} ${{ env.CHES_TOKEN_URL }} ${{ env.CHES_ENDPOINT_URL }}
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ steps.get-latest-tag.outputs.tag }}/tools/config/update-configmap.sh | bash /dev/stdin ${{ env.TARGET_ENV }} ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.COMMON_NAMESPACE }} ${{ env.DB_JDBC_CONNECT_STRING }} ${{ env.DB_PWD }} ${{ env.DB_USER }} ${{ env.SPLUNK_TOKEN }} ${{ env.CHES_CLIENT_ID }} ${{ env.CHES_CLIENT_SECRET }} ${{ env.CHES_TOKEN_URL }} ${{ env.CHES_ENDPOINT_URL }}
           
           # Start rollout (if necessary) and follow it
           oc rollout latest dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
@@ -169,7 +135,3 @@ jobs:
           oc logs -f dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
-      - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.2.0
-        with:
-          target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE_DEV }}.apps.silver.devops.gov.bc.ca/v3/api-docs'
