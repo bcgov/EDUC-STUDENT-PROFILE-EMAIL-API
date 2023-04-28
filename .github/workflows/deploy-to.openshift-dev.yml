@@ -32,7 +32,6 @@ env:
   ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
 
   APP_NAME: 'student-profile-email-api'
-  DB_NAME: 'api_student_profile_email'
   REPO_NAME: "educ-student-profile-email-api"
   BRANCH: "master"
   NAMESPACE: ${{ secrets.PEN_NAMESPACE_NO_ENV }}
