@@ -34,6 +34,7 @@ env:
   APP_NAME: 'student-profile-email-api'
   REPO_NAME: "educ-student-profile-email-api"
   BRANCH: "master"
+  APP_NAME_FULL: "student-profile-email-api-master"
   NAMESPACE: ${{ secrets.PEN_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
