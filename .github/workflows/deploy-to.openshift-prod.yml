@@ -25,7 +25,7 @@ env:
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
-  SPRING_BOOT_IMAGE_NAME: student-api-master
+  SPRING_BOOT_IMAGE_NAME: student-profile-email-api-master
 
   APP_NAME: 'student-profile-email-api'
   DB_NAME: 'api_student_profile_email'
