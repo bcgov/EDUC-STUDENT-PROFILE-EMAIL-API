@@ -134,7 +134,7 @@ objects:
       selector:
         app: "${APP_NAME}-${BRANCH}"
         deploymentconfig: "${APP_NAME}-${BRANCH}"
-  - apiVersion: autoscaling/v2beta1
+  - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
       name: "${APP_NAME}-${BRANCH}-cpu-autoscaler"
@@ -150,7 +150,9 @@ objects:
         - type: Resource
           resource:
             name: cpu
-            targetAverageUtilization: 200
+            target:
+              type: Utilization
+              averageUtilization: 200
 parameters:
   - name: REPO_NAME
     description: Application repository name
