@@ -58,6 +58,18 @@ public class EmailNotificationControllerTest {
   }
 
   @Test
+  public void sendEmail_withoutScope_shouldReturnStatusForbidden() throws Exception {
+    final var entity = this.createEmailNotificationEntity("verifyEmail.gmp", Map.of("identityTypeLabel", "Basic BCeID","verificationUrl", "https://test.co/verify?verificationToken", "jwtToken", "12345ABCDE"));
+
+    this.mockMvc
+        .perform(post("/api/v2/send-email")
+            .with(jwt().jwt((jwt) -> jwt.claim("scope", "WRONG_SCOPE")))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString((entity))))
+        .andDo(print()).andExpect(status().isForbidden());
+  }
+
+  @Test
   public void sendEmail_givenValidPayloadWith_GMP_VERIFY_EMAIL_shouldSendEmail() throws Exception {
     final var entity = this.createEmailNotificationEntity("verifyEmail.gmp", Map.of("identityTypeLabel", "Basic BCeID","verificationUrl", "https://test.co/verify?verificationToken", "jwtToken", "12345ABCDE"));
     this.mockMvc.perform(post("/api/v2/send-email").with(jwt().jwt((jwt) -> jwt.claim("scope", "SEND_STUDENT_PROFILE_EMAIL"))).contentType(MediaType.APPLICATION_JSON)
