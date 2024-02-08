@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.rest;
 
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.struct.CHESEmailEntity;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -72,7 +73,7 @@ public class RestUtils {
     return chesEmail;
   }
 
-  public CHESEmailEntity getChesEmail(final String fromEmail, final String toEmail, final String body, final String subject) {
+  public CHESEmailEntity getChesEmail(final String fromEmail, final List<String> toEmail, final String body, final String subject) {
     final CHESEmailEntity chesEmail = new CHESEmailEntity();
     chesEmail.setBody(body);
     chesEmail.setBodyType("html");
@@ -82,7 +83,7 @@ public class RestUtils {
     chesEmail.setPriority("normal");
     chesEmail.setSubject(subject);
     chesEmail.setTag("tag");
-    chesEmail.getTo().add(toEmail);
+    chesEmail.getTo().addAll(toEmail);
     return chesEmail;
   }
 
@@ -90,7 +91,7 @@ public class RestUtils {
     this.sendEmail(this.getChesEmail(emailAddress, body, subject));
   }
 
-  public void sendEmail(final String fromEmail, final String toEmail, final String body, final String subject) {
+  public void sendEmail(final String fromEmail, final List<String> toEmail, final String body, final String subject) {
     this.sendEmail(this.getChesEmail(fromEmail, toEmail, body, subject));
   }
 }

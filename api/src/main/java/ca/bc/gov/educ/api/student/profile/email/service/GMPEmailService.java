@@ -5,13 +5,12 @@ import ca.bc.gov.educ.api.student.profile.email.exception.InvalidParameterExcept
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
+import java.util.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
@@ -41,7 +40,7 @@ public class GMPEmailService {
     log.debug("Sending completed PEN email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(penRequest.getEmailAddress())
+      .toEmail(List.of(penRequest.getEmailAddress()))
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName(demographicsChanged ? "completedRequest.demographicChange.gmp" : "completedRequest.gmp")
       .emailFields(Map.of("firstName", StringUtils.defaultString(penRequest.getFirstName()), LOGIN_URL, loginUrl))
@@ -56,7 +55,7 @@ public class GMPEmailService {
     log.debug("Sending rejected PEN email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(penRequest.getEmailAddress())
+      .toEmail(List.of(penRequest.getEmailAddress()))
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("rejectedRequest.gmp")
       .emailFields(Map.of("rejectionReason", penRequest.getRejectionReason(), LOGIN_URL, loginUrl))
@@ -70,7 +69,7 @@ public class GMPEmailService {
     log.debug("Sending additional info PEN email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(penRequest.getEmailAddress())
+      .toEmail(List.of(penRequest.getEmailAddress()))
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("additionalInfoRequested.gmp")
       .emailFields(Map.of(LOGIN_URL, loginUrl))
@@ -84,7 +83,7 @@ public class GMPEmailService {
     log.debug("Sending sendStaleReturnedRequestNotificationEmail info GMP email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(penRequest.getEmailAddress())
+      .toEmail(List.of(penRequest.getEmailAddress()))
       .subject(PERSONAL_EDUCATION_NUMBER_PEN_REQUEST)
       .templateName("notify.stale.return.gmp")
       .emailFields(Map.of(LOGIN_URL, loginUrl))
@@ -103,7 +102,7 @@ public class GMPEmailService {
     log.debug("sending verify email.");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(emailVerificationEntity.getEmailAddress())
+      .toEmail(List.of(emailVerificationEntity.getEmailAddress()))
       .subject(VERIFY_EMAIL_SUBJECT)
       .templateName("verifyEmail.gmp")
       .emailFields(Map.of("identityTypeLabel", emailVerificationEntity.getIdentityTypeLabel(), "verificationUrl", emailVerificationEntity.getVerificationUrl(), "jwtToken", emailVerificationEntity.getJwtToken()))

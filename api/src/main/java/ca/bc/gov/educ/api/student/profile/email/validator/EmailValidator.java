@@ -40,9 +40,12 @@ public class EmailValidator {
     if (!PATTERN.matcher(emailEntity.getFromEmail()).matches()) {
       apiValidationErrors.add(this.createEmailFieldError(emailEntity.getFromEmail(), "fromEmail"));
     }
-    if (!PATTERN.matcher(emailEntity.getToEmail()).matches()) {
-      apiValidationErrors.add(this.createEmailFieldError(emailEntity.getToEmail(), "toEmail"));
+    for (String toEmail : emailEntity.getToEmail()) {
+      if (!PATTERN.matcher(toEmail).matches()) {
+        apiValidationErrors.add(this.createEmailFieldError(toEmail, "toEmail"));
+      }
     }
+
     return apiValidationErrors;
   }
 
