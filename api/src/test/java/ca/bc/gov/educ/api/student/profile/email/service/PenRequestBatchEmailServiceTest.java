@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.PendingRecords;
+import java.util.*;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,36 +41,40 @@ public class PenRequestBatchEmailServiceTest {
 
   @Test
   public void sendArchivePenRequestBatchHasSchoolContactEmail_givenArchivePenRequestBatchEmailEntity_shouldSendCorrectEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.prbEmailService.sendArchivePenRequestBatchHasSchoolContactEmail(this.createArchivePenRequestBatchNotificationEntity());
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getArchivePenRequestBatchHasSchoolContactBody(), this.getArchivePenRequestBatchHasSchoolContactSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.getArchivePenRequestBatchHasSchoolContactBody(), this.getArchivePenRequestBatchHasSchoolContactSubject());
   }
 
   @Test
   public void sendArchivePenRequestBatchHasSchoolContactEmail_givenArchivePenRequestBatchEmailEntityNoPending_shouldSendCorrectEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     val entity = this.createArchivePenRequestBatchNotificationEntity();
     entity.setPendingRecords(PendingRecords.NONE);
     this.prbEmailService.sendArchivePenRequestBatchHasSchoolContactEmail(entity);
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getArchivePenRequestBatchHasSchoolContactBody(), this.getArchivePenRequestBatchHasSchoolContactSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.getArchivePenRequestBatchHasSchoolContactBody(), this.getArchivePenRequestBatchHasSchoolContactSubject());
   }
 
   @Test
   public void sendArchivePenRequestBatchHasSchoolContactEmail_givenArchivePenRequestBatchEmailEntityWithPendingSome_shouldSendCorrectEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     val entity = this.createArchivePenRequestBatchNotificationEntity();
     entity.setPendingRecords(PendingRecords.SOME);
     this.prbEmailService.sendArchivePenRequestBatchHasSchoolContactEmail(entity);
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.emailBodyPendingSome(), this.getArchivePenRequestBatchHasSchoolContactSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.emailBodyPendingSome(), this.getArchivePenRequestBatchHasSchoolContactSubject());
   }
 
   @Test
   public void sendArchivePenRequestBatchHasSchoolContactEmail_givenArchivePenRequestBatchEmailEntityWithPendingAll_shouldSendCorrectEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     val entity = this.createArchivePenRequestBatchNotificationEntity();
     entity.setPendingRecords(PendingRecords.ALL);
     this.prbEmailService.sendArchivePenRequestBatchHasSchoolContactEmail(entity);
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.emailBodyPendingAll(), this.getArchivePenRequestBatchHasSchoolContactSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.emailBodyPendingAll(), this.getArchivePenRequestBatchHasSchoolContactSubject());
   }
 
   private String emailBodyPendingAll() {
@@ -79,15 +84,16 @@ public class PenRequestBatchEmailServiceTest {
 
   @Test
   public void sendArchivePenRequestBatchHasNoSchoolContactEmail_givenArchivePenRequestBatchEmailEntity_shouldSendCorrectEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.prbEmailService.sendArchivePenRequestBatchHasNoSchoolContactEmail(this.createArchivePenRequestBatchNotificationEntity());
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getArchivePenRequestBatchHasNoSchoolContactBody(), this.getArchivePenRequestBatchHasNoSchoolContactSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.getArchivePenRequestBatchHasNoSchoolContactBody(), this.getArchivePenRequestBatchHasNoSchoolContactSubject());
   }
 
   ArchivePenRequestBatchNotificationEntity createArchivePenRequestBatchNotificationEntity() {
     final var entity = new ArchivePenRequestBatchNotificationEntity();
     entity.setSubmissionNumber("000001");
-    entity.setToEmail("test@email.co");
+    entity.setToEmail(List.of("test@email.co"));
     entity.setFromEmail("test@email.co");
     entity.setMincode("123");
     entity.setSchoolName("Columneetza Secondary");

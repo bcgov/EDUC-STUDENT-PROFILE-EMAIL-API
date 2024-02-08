@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.rest;
 
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.struct.CHESEmailEntity;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -82,7 +83,7 @@ public class RestUtils {
     chesEmail.setPriority("normal");
     chesEmail.setSubject(subject);
     chesEmail.setTag("tag");
-    chesEmail.getTo().add(toEmail);
+    chesEmail.getTo().add(toEmail); //TODO we need to add a list of emails here? Map through them all
     return chesEmail;
   }
 
@@ -92,5 +93,20 @@ public class RestUtils {
 
   public void sendEmail(final String fromEmail, final String toEmail, final String body, final String subject) {
     this.sendEmail(this.getChesEmail(fromEmail, toEmail, body, subject));
+  }
+
+  //TODO probably need to add an overloaded method here that will accept a list of Strings for toEmail
+  public void sendEmail(final String fromEmail, final List<String> toEmail, final String body, final String subject) {
+    final CHESEmailEntity chesEmail = new CHESEmailEntity();
+    chesEmail.setBody(body);
+    chesEmail.setBodyType("html");
+    chesEmail.setDelayTS(0);
+    chesEmail.setEncoding("utf-8");
+    chesEmail.setFrom(fromEmail);
+    chesEmail.setPriority("normal");
+    chesEmail.setSubject(subject);
+    chesEmail.setTag("tag");
+    chesEmail.setTo(toEmail);
+    this.sendEmail(chesEmail);
   }
 }

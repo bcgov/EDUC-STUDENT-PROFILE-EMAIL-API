@@ -38,14 +38,16 @@ public class MacroEmailServiceTest {
 
   @Test
   public void notifyMacroEdit_givenMacroEditNotificationEntityAndNewMacro_shouldSendCorrectMacroCreateEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.macroEmailService.notifyMacroEdit(this.createMacroNotificationEntity(), true);
     verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getMacroCreateBody(), this.getMacroCreateSubject());
   }
 
   @Test
   public void notifyMacroEdit_givenMacroEditNotificationEntityAndNotNewMacro_shouldSendCorrectMacroUpdateEmail() {
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.macroEmailService.notifyMacroEdit(this.createMacroNotificationEntity(), false);
     verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getMacroUpdateBody(), this.getMacroUpdateSubject());
   }

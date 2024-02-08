@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.props.PenRequestBatchProperties;
-import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.*;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.ArchivePenRequestBatchNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.PenRequestBatchSchoolErrorNotificationEntity;
 import lombok.AccessLevel;
@@ -29,7 +29,7 @@ public class PenRequestBatchEmailService {
 
   public void notifySchoolFileFormatIncorrect(final PenRequestBatchSchoolErrorNotificationEntity errorNotificationEntity) {
     final String subject = "PEN Request could not be processed for File: ".concat(errorNotificationEntity.getFileName()).concat(" with Submission Number : ").concat(errorNotificationEntity.getSubmissionNumber());
-    final var emailNotificationEntity = EmailNotificationEntity.builder()
+    final var emailNotificationEntity = PenRequestBatchEmailNotificationEntity.builder() //TODO This will also need to accept a list of strings for the To Email field
       .fromEmail(errorNotificationEntity.getFromEmail())
       .toEmail(errorNotificationEntity.getToEmail())
       .subject(subject)
@@ -45,7 +45,7 @@ public class PenRequestBatchEmailService {
     log.debug("Completed archive pen request batch has school contact email successfully");
   }
 
-  private EmailNotificationEntity getEmailBody(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
+  private PenRequestBatchEmailNotificationEntity getEmailBody(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     final String templateName;
     if (archivePenRequestBatchEmailEntity.getPendingRecords() != null) {
       switch (archivePenRequestBatchEmailEntity.getPendingRecords()) {
@@ -65,7 +65,8 @@ public class PenRequestBatchEmailService {
 
     final String subject = MessageFormat.format(this.props.getArchivePrbHasSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode(), archivePenRequestBatchEmailEntity.getSchoolName());
 
-    return EmailNotificationEntity.builder()
+//    Do we need to change this to BATCHEMAILNOTIFICATIONENTITY?
+    return PenRequestBatchEmailNotificationEntity.builder()
       .fromEmail(archivePenRequestBatchEmailEntity.getFromEmail())
       .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
       .subject(subject)
@@ -77,7 +78,7 @@ public class PenRequestBatchEmailService {
   public void sendArchivePenRequestBatchHasNoSchoolContactEmail(final ArchivePenRequestBatchNotificationEntity archivePenRequestBatchEmailEntity) {
     log.debug("Sending archive pen request batch has school contact email");
     final String subject = MessageFormat.format(this.props.getArchivePrbHasNoSchoolContactEmailSubject(), archivePenRequestBatchEmailEntity.getSubmissionNumber(), archivePenRequestBatchEmailEntity.getMincode());
-    final var emailNotificationEntity =  EmailNotificationEntity.builder()
+    final var emailNotificationEntity =  PenRequestBatchEmailNotificationEntity.builder()
       .fromEmail(archivePenRequestBatchEmailEntity.getFromEmail())
       .toEmail(archivePenRequestBatchEmailEntity.getToEmail())
       .subject(subject)

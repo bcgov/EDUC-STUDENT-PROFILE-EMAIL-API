@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.BaseEmailEntity;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class CHESEmailService {
   }
 
   public void sendEmail(final String fromEmail, final String toEmail, final String body, final String subject) {
+    this.restUtils.sendEmail(fromEmail, toEmail, body, subject);
+  }
+  public void sendEmail(final String fromEmail, final List<String> toEmail, final String body, final String subject) {
     this.restUtils.sendEmail(fromEmail, toEmail, body, subject);
   }
 

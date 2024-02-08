@@ -54,7 +54,8 @@ public class EmailNotificationControllerTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
   }
 
   @Test

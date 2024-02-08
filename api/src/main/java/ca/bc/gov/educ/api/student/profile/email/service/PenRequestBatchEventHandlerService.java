@@ -54,6 +54,7 @@ public class PenRequestBatchEventHandlerService extends BaseEventHandlerService 
     return this.emailAPIEventProcessed(emailEvent);
   }
 
+//  TODO Focus on this one
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleNotifyPenRequestBatchArchive(final Event event, final boolean hasSchoolContact) throws JsonProcessingException {
     final EmailEventEntity emailEvent = this.getEmailEventService().createOrUpdateEventInDB(event, EventOutcome.ARCHIVE_EMAIL_SENT);// make sure the db operation is successful before sending the email.

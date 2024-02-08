@@ -11,6 +11,7 @@ import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.*;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.*;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.*;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
@@ -23,8 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
@@ -32,6 +31,8 @@ import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.PEN
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -79,7 +80,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentPenRequestCompleteChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_COMPLETE)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createCompletedEmailEntity()))
         .replyTo("local")
@@ -108,7 +110,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentProfileRequestCompleteAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_COMPLETE)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createUMPEntity()))
         .replyTo("local")
@@ -137,7 +140,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentPenRequestRejectAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_REJECT)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedEntity()))
         .replyTo("local")
@@ -165,7 +169,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentProfileRequestRejectGivenChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_REJECT)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createRejectedUMPEntity()))
         .replyTo("local")
@@ -193,7 +198,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentPenRequestReturnAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PEN_REQUEST_RETURN)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoEntity()))
         .replyTo("local")
@@ -221,7 +227,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyStudentProfileRequestReturnAndChesCallFailed_shouldUpdateStatusToPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_STUDENT_PROFILE_REQUEST_RETURN)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createAdditionalInfoUMPEntity()))
         .replyTo("local")
@@ -277,7 +284,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyPenRequestBatchArchiveHasNoSchoolContactAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_PEN_REQUEST_BATCH_ARCHIVE_HAS_NO_SCHOOL_CONTACT)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createArchivePenRequestBatchNotificationEntity()))
         .replyTo("local")
@@ -292,7 +300,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyPenRequestBatchFileFormatErrorChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createErrorNotificationEntity()))
         .replyTo("local")
@@ -307,7 +316,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyPenRequestBatchFileFormatErrorChesReturnsSuccess_shouldSetStatusMessagePublished() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.PEN_REQUEST_BATCH_NOTIFY_SCHOOL_FILE_FORMAT_ERROR)
         .eventPayload(JsonUtil.getJsonStringFromObject(this.createErrorNotificationEntity()))
         .replyTo("local")
@@ -322,7 +332,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyMacroCreate_shouldSendMacroCreateEmail() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_CREATE)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
       .replyTo("local")
@@ -337,7 +348,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyMacroCreate_shouldSendMacroCreateEmailAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_CREATE)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
       .replyTo("local")
@@ -352,7 +364,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyMacroUpdate_shouldSendMacroUpdateEmail() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_UPDATE)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
       .replyTo("local")
@@ -367,7 +380,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenNotifyMacroUpdate_shouldSendMacroUpdateEmailAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.NOTIFY_MACRO_UPDATE)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createMacroNotificationEntity()))
       .replyTo("local")
@@ -382,7 +396,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenSendEmail_shouldSendEmail() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doNothing().when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.SEND_EMAIL)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createEmailNotificationEntity("additionalInfoRequested.gmp", Map.of("loginUrl", "https://test.co"))))
       .replyTo("local")
@@ -397,7 +412,8 @@ public class EventHandlerDelegatorServiceTest {
   @Test
   public void handleEvent_givenSendEmail_shouldSendEmailAndChesThrowsException_shouldSetStatusPendingAck() throws JsonProcessingException, InterruptedException {
     final var sagaId = UUID.randomUUID();
-    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), any(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyString(), any(), any());
+    doThrow(WebClientResponseException.class).when(this.restUtils).sendEmail(any(), anyList(), any(), any());
     this.eventHandlerService.handleEvent(Event.builder().eventType(EventType.SEND_EMAIL)
       .eventPayload(JsonUtil.getJsonStringFromObject(this.createEmailNotificationEntity("additionalInfoRequested.gmp", Map.of("loginUrl", "https://test.co"))))
       .replyTo("local")
@@ -461,7 +477,7 @@ public class EventHandlerDelegatorServiceTest {
   ArchivePenRequestBatchNotificationEntity createArchivePenRequestBatchNotificationEntity() {
     final var entity = new ArchivePenRequestBatchNotificationEntity();
     entity.setSubmissionNumber("000001");
-    entity.setToEmail("test@email.co");
+    entity.setToEmail(List.of("test@email.co"));
     entity.setFromEmail("test@email.co");
     entity.setMincode("123");
     entity.setSchoolName("Columneetza Secondary");
@@ -472,7 +488,7 @@ public class EventHandlerDelegatorServiceTest {
     final PenRequestBatchSchoolErrorNotificationEntity entity = new PenRequestBatchSchoolErrorNotificationEntity();
     entity.setFromEmail("test@test.ca");
     entity.setSubmissionNumber("test");
-    entity.setToEmail("test@test.ca");
+    entity.setToEmail(List.of("test@email.co"));
     entity.setDateTime(LocalDateTime.now().toString());
     entity.setFailReason("test");
     entity.setFileName("test");
