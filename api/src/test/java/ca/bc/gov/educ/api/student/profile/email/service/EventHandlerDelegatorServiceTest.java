@@ -11,6 +11,7 @@ import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.*;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.penrequestbatch.*;
 import ca.bc.gov.educ.api.student.profile.email.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.*;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
@@ -23,8 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.EventStatus.MESSAGE_PUBLISHED;
@@ -461,7 +460,7 @@ public class EventHandlerDelegatorServiceTest {
   ArchivePenRequestBatchNotificationEntity createArchivePenRequestBatchNotificationEntity() {
     final var entity = new ArchivePenRequestBatchNotificationEntity();
     entity.setSubmissionNumber("000001");
-    entity.setToEmail("test@email.co");
+    entity.setToEmail(List.of("test@email.co"));
     entity.setFromEmail("test@email.co");
     entity.setMincode("123");
     entity.setSchoolName("Columneetza Secondary");
@@ -472,7 +471,7 @@ public class EventHandlerDelegatorServiceTest {
     final PenRequestBatchSchoolErrorNotificationEntity entity = new PenRequestBatchSchoolErrorNotificationEntity();
     entity.setFromEmail("test@test.ca");
     entity.setSubmissionNumber("test");
-    entity.setToEmail("test@test.ca");
+    entity.setToEmail(List.of("test@test.ca"));
     entity.setDateTime(LocalDateTime.now().toString());
     entity.setFailReason("test");
     entity.setFileName("test");
@@ -494,7 +493,7 @@ public class EventHandlerDelegatorServiceTest {
   EmailNotificationEntity createEmailNotificationEntity(String templateName, Map<String, String> emailFields) {
     return EmailNotificationEntity.builder()
       .fromEmail("test@email.co")
-      .toEmail("test@email.co")
+      .toEmail(List.of("test@email.co"))
       .subject("PEN Registry Message")
       .templateName(templateName)
       .emailFields(emailFields)

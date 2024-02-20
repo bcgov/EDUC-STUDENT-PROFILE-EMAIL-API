@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,14 +41,14 @@ public class MacroEmailServiceTest {
   public void notifyMacroEdit_givenMacroEditNotificationEntityAndNewMacro_shouldSendCorrectMacroCreateEmail() {
     doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
     this.macroEmailService.notifyMacroEdit(this.createMacroNotificationEntity(), true);
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getMacroCreateBody(), this.getMacroCreateSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.getMacroCreateBody(), this.getMacroCreateSubject());
   }
 
   @Test
   public void notifyMacroEdit_givenMacroEditNotificationEntityAndNotNewMacro_shouldSendCorrectMacroUpdateEmail() {
     doNothing().when(this.restUtils).sendEmail(any(), any(), any(), any());
     this.macroEmailService.notifyMacroEdit(this.createMacroNotificationEntity(), false);
-    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", "test@email.co", this.getMacroUpdateBody(), this.getMacroUpdateSubject());
+    verify(this.restUtils, atLeastOnce()).sendEmail("test@email.co", List.of("test@email.co"), this.getMacroUpdateBody(), this.getMacroUpdateSubject());
   }
 
   MacroEditNotificationEntity createMacroNotificationEntity() {

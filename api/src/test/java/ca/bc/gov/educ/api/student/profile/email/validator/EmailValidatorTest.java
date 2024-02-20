@@ -1,13 +1,13 @@
 package ca.bc.gov.educ.api.student.profile.email.validator;
 
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.UMPRequestEmailVerificationEntity;
+import ca.bc.gov.educ.api.student.profile.email.struct.v2.*;
+import java.util.*;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Map;
 
 @RunWith(JUnitParamsRunner.class)
 public class EmailValidatorTest {
@@ -29,5 +29,14 @@ public class EmailValidatorTest {
     entity.setEmailAddress(email);
     val result = this.validator.validateEmail(entity);
     assert (result.size() == expectedErrorSize);
+  }
+
+  @Test
+  public void testValidateEmail_givenMultipleToEmailsWithIncorrectInformation_shouldReturnErrors() {
+    List<String> toEmail = List.of("username@test.ca", "username@test.ca", "a@b.c", "username@yahoo.com.");
+    final EmailNotificationEntity entity = new EmailNotificationEntity("email@email.com", toEmail, "test subject", "template1", Map.of("test", "test") );
+    val result = this.validator.validateEmail(entity);
+
+    assert (result.size() == 2);
   }
 }

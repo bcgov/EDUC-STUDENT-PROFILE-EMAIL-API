@@ -4,13 +4,12 @@ import ca.bc.gov.educ.api.student.profile.email.exception.InvalidParameterExcept
 import ca.bc.gov.educ.api.student.profile.email.props.ApplicationProperties;
 import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.gmpump.*;
+import java.util.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BASIC;
 import static ca.bc.gov.educ.api.student.profile.email.constants.IdentityType.BCSC;
@@ -39,7 +38,7 @@ public class UMPEmailService {
     log.debug("Sending completed UMP email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(email.getEmailAddress())
+      .toEmail(List.of(email.getEmailAddress()))
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("completedRequest.ump")
       .emailFields(Map.of("firstName", StringUtils.defaultString(email.getFirstName()), LOGIN_URL, loginUrl))
@@ -54,7 +53,7 @@ public class UMPEmailService {
     log.debug("Sending rejected UMP email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(email.getEmailAddress())
+      .toEmail(List.of(email.getEmailAddress()))
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("rejectedRequest.ump")
       .emailFields(Map.of("rejectionReason", email.getRejectionReason(), LOGIN_URL, loginUrl))
@@ -68,7 +67,7 @@ public class UMPEmailService {
     log.debug("Sending additional info UMP email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(email.getEmailAddress())
+      .toEmail(List.of(email.getEmailAddress()))
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("additionalInfoRequested.ump")
       .emailFields(Map.of(LOGIN_URL, loginUrl))
@@ -81,7 +80,7 @@ public class UMPEmailService {
     log.debug("Sending sendStaleReturnedRequestNotificationEmail info UMP email");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(emailEntity.getEmailAddress())
+      .toEmail(List.of(emailEntity.getEmailAddress()))
       .subject(STUDENT_PROFILE_REQUEST)
       .templateName("notify.stale.return.ump")
       .emailFields(Map.of(LOGIN_URL, loginUrl))
@@ -100,7 +99,7 @@ public class UMPEmailService {
     log.debug("sending verify email for UMP.");
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(FROM_EMAIL)
-      .toEmail(emailVerificationEntity.getEmailAddress())
+      .toEmail(List.of(emailVerificationEntity.getEmailAddress()))
       .subject(VERIFY_EMAIL_SUBJECT)
       .templateName("verifyEmail.ump")
       .emailFields(Map.of("identityTypeLabel", emailVerificationEntity.getIdentityTypeLabel(), "verificationUrl", emailVerificationEntity.getVerificationUrl(), "jwtToken", emailVerificationEntity.getJwtToken()))

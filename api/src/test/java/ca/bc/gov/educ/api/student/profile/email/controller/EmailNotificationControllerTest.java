@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.student.profile.email.controller.v2.EmailNotificationC
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -99,7 +98,7 @@ public class EmailNotificationControllerTest {
   EmailNotificationEntity createEmailNotificationEntity(String templateName, Map<String, String> emailFields) {
     return EmailNotificationEntity.builder()
       .fromEmail("test@email.co")
-      .toEmail("test@email.co")
+      .toEmail(List.of("test@email.co"))
       .subject("PEN Registry Message")
       .templateName(templateName)
       .emailFields(emailFields)

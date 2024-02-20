@@ -3,13 +3,13 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 import ca.bc.gov.educ.api.student.profile.email.props.MacroProperties;
 import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
 import ca.bc.gov.educ.api.student.profile.email.struct.v1.macro.MacroEditNotificationEntity;
+import java.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -33,7 +33,7 @@ public class MacroEmailService {
 
     final var emailNotificationEntity = EmailNotificationEntity.builder()
       .fromEmail(macroEditNotificationEntity.getFromEmail())
-      .toEmail(macroEditNotificationEntity.getToEmail())
+      .toEmail(List.of(macroEditNotificationEntity.getToEmail()))
       .subject(subject)
       .templateName(newMacro ? "macro.create" : "macro.update")
       .emailFields(Map.of("businessUseTypeName", macroEditNotificationEntity.getBusinessUseTypeName(), "macroCode", macroEditNotificationEntity.getMacroCode(), "macroTypeCode", macroEditNotificationEntity.getMacroTypeCode(), "macroText", macroEditNotificationEntity.getMacroText()))

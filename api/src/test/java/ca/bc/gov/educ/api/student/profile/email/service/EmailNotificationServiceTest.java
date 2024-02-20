@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.student.profile.email.service;
 
 import ca.bc.gov.educ.api.student.profile.email.rest.RestUtils;
 import ca.bc.gov.educ.api.student.profile.email.struct.v2.EmailNotificationEntity;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -224,7 +223,7 @@ public class EmailNotificationServiceTest {
   EmailNotificationEntity createEmailNotificationEntity(String templateName, Map<String, String> emailFields) {
     return EmailNotificationEntity.builder()
       .fromEmail("test@email.co")
-      .toEmail("test@email.co")
+      .toEmail(List.of("test@email.co"))
       .subject("PEN Registry Message")
       .templateName(templateName)
       .emailFields(emailFields)
