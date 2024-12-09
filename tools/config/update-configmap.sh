@@ -10,16 +10,17 @@ CHES_CLIENT_ID=$9
 CHES_CLIENT_SECRET=${10}
 CHES_TOKEN_URL=${11}
 CHES_ENDPOINT_URL=${12}
+BRANCH=${13}
 
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
 
-SOAM_KC=soam-$envValue.apps.silver.devops.gov.bc.ca
+SOAM_KC="soam-$envValue.apps.silver.devops.gov.bc.ca"
 NATS_CLUSTER=educ_nats_cluster
 NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 
-SOAM_KC_LOAD_USER_ADMIN=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
-SOAM_KC_LOAD_USER_PASS=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
+SOAM_KC_LOAD_USER_ADMIN=$(oc -n "$COMMON_NAMESPACE-$envValue" -o json get secret "sso-admin-${envValue}" | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
+SOAM_KC_LOAD_USER_PASS=$(oc -n "$COMMON_NAMESPACE-$envValue" -o json get secret "sso-admin-${envValue}" | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
 
 URL_LOGIN_BASIC_GMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_gmp"
 URL_LOGIN_BASIC_UMP="https://student-profile-${PEN_NAMESPACE}-$envValue.getmypen.gov.bc.ca/api/auth/login_bceid_ump"
@@ -148,11 +149,11 @@ oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-config-map" \
   --dry-run -o yaml | oc apply -f -
 
 echo
-echo Setting environment variables for $APP_NAME-$SOAM_KC_REALM_ID application
-oc -n $PEN_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-config-map dc/$APP_NAME-$SOAM_KC_REALM_ID
+echo Setting environment variables for "$APP_NAME-$SOAM_KC_REALM_ID" application
+oc -n "$PEN_NAMESPACE-$envValue" set env --from="configmap/$APP_NAME-config-map" "deployment/$APP_NAME-$BRANCH"
 
 echo Creating config map "$APP_NAME"-flb-sc-config-map
-oc create -n "$PEN_NAMESPACE"-"$envValue" configmap "$APP_NAME"-flb-sc-config-map --from-literal=fluent-bit.conf="$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run -o yaml | oc apply -f -
+oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-flb-sc-config-map" --from-literal="fluent-bit.conf=$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run -o yaml | oc apply -f -
 
 echo Removing un-needed config entries
-oc -n "$PEN_NAMESPACE"-"$envValue" set env dc/"$APP_NAME"-$SOAM_KC_REALM_ID SOAM_PUBLIC_KEY-
+oc -n "$PEN_NAMESPACE"-"$envValue" set env "deployment/$APP_NAME-$SOAM_KC_REALM_ID" SOAM_PUBLIC_KEY-
