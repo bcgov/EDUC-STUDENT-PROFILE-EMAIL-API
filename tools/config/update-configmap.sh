@@ -10,6 +10,7 @@ CHES_CLIENT_ID=$9
 CHES_CLIENT_SECRET=${10}
 CHES_TOKEN_URL=${11}
 CHES_ENDPOINT_URL=${12}
+BRANCH=${13}
 
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
@@ -149,10 +150,10 @@ oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-config-map" \
 
 echo
 echo Setting environment variables for "$APP_NAME-$SOAM_KC_REALM_ID" application
-oc -n "$PEN_NAMESPACE-$envValue" set env --from="configmap/$APP_NAME-config-map" "dc/$APP_NAME-$SOAM_KC_REALM_ID"
+oc -n "$PEN_NAMESPACE-$envValue" set env --from="configmap/$APP_NAME-config-map" "deployment/$APP_NAME-$BRANCH"
 
 echo Creating config map "$APP_NAME"-flb-sc-config-map
 oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-flb-sc-config-map" --from-literal="fluent-bit.conf=$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run -o yaml | oc apply -f -
 
 echo Removing un-needed config entries
-oc -n "$PEN_NAMESPACE"-"$envValue" set env "dc/$APP_NAME-$SOAM_KC_REALM_ID" SOAM_PUBLIC_KEY-
+oc -n "$PEN_NAMESPACE"-"$envValue" set env "deployment/$APP_NAME-$SOAM_KC_REALM_ID" SOAM_PUBLIC_KEY-
