@@ -37,3 +37,7 @@ hs_err_pid*
 .project
 .factorypath
 .vscode
+
+# Vim
+Session.vim
+.vim
