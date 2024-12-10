@@ -146,14 +146,14 @@ oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-config-map" \
   --from-literal=EMAIL_TEMPLATE_MACRO_UPDATE="<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><meta charset=\"ISO-8859-1\"></head><body><span th:text=\"\${\$}{businessUseTypeName}\"></span> macro <span th:text=\"\${\$}{macroCode}\"></span> was updated to:<br><br>Code: <span th:text=\"\${\$}{macroCode}\"></span><br>Type: <span th:text=\"\${\$}{macroTypeCode}\"></span><br>Text: <span th:text=\"\${\$}{macroText}\"></span></body></html>" \
   --from-literal=PURGE_RECORDS_EVENT_AFTER_DAYS=365 \
   --from-literal=SCHEDULED_JOBS_PURGE_OLD_EVENT_RECORDS_CRON="@midnight" \
-  --dry-run -o yaml | oc apply -f -
+  --dry-run=client -o yaml | oc apply -f -
 
 echo
-echo Setting environment variables for "$APP_NAME-$SOAM_KC_REALM_ID" application
+echo Setting environment variables for "$APP_NAME-$BRANCH" application
 oc -n "$PEN_NAMESPACE-$envValue" set env --from="configmap/$APP_NAME-config-map" "deployment/$APP_NAME-$BRANCH"
 
-echo Creating config map "$APP_NAME"-flb-sc-config-map
-oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-flb-sc-config-map" --from-literal="fluent-bit.conf=$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run -o yaml | oc apply -f -
+echo Creating config map "$APP_NAME-flb-sc-config-map"
+oc create -n "$PEN_NAMESPACE-$envValue" configmap "$APP_NAME-flb-sc-config-map" --from-literal="fluent-bit.conf=$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run=client -o yaml | oc apply -f -
 
 echo Removing un-needed config entries
-oc -n "$PEN_NAMESPACE"-"$envValue" set env "deployment/$APP_NAME-$SOAM_KC_REALM_ID" SOAM_PUBLIC_KEY-
+oc -n "$PEN_NAMESPACE-$envValue" set env "deployment/$APP_NAME-$SOAM_KC_REALM_ID" SOAM_PUBLIC_KEY-
