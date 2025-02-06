@@ -151,7 +151,8 @@ jobs:
             ${{ env.CHES_CLIENT_ID }} \
             ${{ env.CHES_CLIENT_SECRET }} \
             ${{ env.CHES_TOKEN_URL }} \
-            ${{ env.CHES_ENDPOINT_URL }}
+            ${{ env.CHES_ENDPOINT_URL }} \
+            ${{ env.BRANCH }}
 
           # Start rollout (if necessary) and follow it
           oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
