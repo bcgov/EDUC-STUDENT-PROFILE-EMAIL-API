@@ -47,6 +47,8 @@ on:
 
 jobs:
   openshift-ci-cd:
+    permissions:
+      contents: read
     name: Deploy to OpenShift PROD
     runs-on: ubuntu-22.04
     environment: production
